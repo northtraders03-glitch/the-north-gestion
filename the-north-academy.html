@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The North Academy — Gestión de Riesgo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --primary:#FF6B00; --primary-dark:#CC5500; --primary-light:#FF9933;
+  --bg:#080808; --bg2:#101010; --bg3:#181818; --bg4:#202020;
+  --border:#252525; --border-o:#FF6B0025;
+  --text:#EFEFEF; --text2:#999; --text3:#555;
+  --ok:#00C853; --err:#FF1744; --warn:#FFD600;
+  --font:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+
+/* ── LOGO TEXT ── */
+.logo-block{text-align:center;margin-bottom:32px}
+.logo-block .the{font-size:12px;font-weight:400;letter-spacing:5px;color:var(--text3);display:block;margin-bottom:2px}
+.logo-block .north{font-size:36px;font-weight:900;letter-spacing:3px;color:#ffffff;display:block;line-height:1}
+.logo-block .gestion{font-size:36px;font-weight:900;letter-spacing:3px;display:block;line-height:1;
+  background:linear-gradient(135deg,#FF6B00,#FF9933);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-block .sub2{color:var(--text3);font-size:9px;letter-spacing:4px;margin-top:10px;display:block;font-weight:600}
+.logo-divider{width:40px;height:1px;background:linear-gradient(90deg,transparent,#FF6B00,transparent);margin:10px auto 0}
+
+/* ── AUTH ── */
+.auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
+  background:radial-gradient(ellipse at top,#150500 0%,#080808 65%)}
+.auth-box{background:var(--bg2);border:1px solid var(--border-o);border-radius:16px;
+  padding:40px;width:100%;max-width:440px;box-shadow:0 0 80px #FF6B0012}
+.auth-tabs{display:flex;gap:3px;margin-bottom:26px;background:var(--bg3);border-radius:8px;padding:3px}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--text2);
+  border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;letter-spacing:.5px}
+.auth-tab.active{background:var(--primary);color:#fff}
+.fg{margin-bottom:15px}
+.fg label{display:block;font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:1px;font-weight:700}
+.fg input,.fg select{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus{border-color:var(--primary)}
+.fg select option{background:var(--bg3)}
+.btn-main{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary-light));
+  border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;
+  letter-spacing:1px;transition:all .2s;margin-top:6px}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 8px 24px #FF6B0035}
+.msg-err{color:var(--err);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
+.msg-ok{color:var(--ok);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
+
+/* ── SIDEBAR ── */
+#app{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--bg2);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
+.sb-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px}
+.sb-logo .logo-text-block h1{font-size:14px;letter-spacing:2px}
+.sb-logo .logo-text-block p{font-size:8px;letter-spacing:3px}
+.sb-user{padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3)}
+.sb-user strong{color:var(--primary);display:block;font-size:12px;margin-bottom:1px}
+nav{flex:1;padding:10px 0;overflow-y:auto}
+.nav-sec{padding:14px 18px 5px;font-size:9px;color:var(--text3);letter-spacing:2.5px;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:9px;padding:11px 18px;color:var(--text2);cursor:pointer;
+  transition:all .2s;font-size:12px;font-weight:500;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:var(--bg3)}
+.nav-item.active{color:var(--primary);border-left-color:var(--primary);background:#FF6B000D;font-weight:700}
+.nav-item svg{flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:9px;background:transparent;border:1px solid var(--border);
+  border-radius:6px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-logout:hover{border-color:var(--err);color:var(--err)}
+
+/* ── MAIN ── */
+.main{margin-left:230px;min-height:100vh}
+.topbar{padding:15px 28px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar h1{font-size:18px;font-weight:700;letter-spacing:.5px}
+.topbar-r{display:flex;align-items:center;gap:14px}
+.badge{background:var(--primary);color:#fff;font-size:9px;padding:3px 9px;
+  border-radius:20px;font-weight:800;letter-spacing:1px}
+.content{padding:26px 28px}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.card:last-child{margin-bottom:0}
+.card-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1.5px;margin-bottom:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:22px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--primary),transparent)}
+.slabel{font-size:10px;color:var(--text3);letter-spacing:1.5px;font-weight:700}
+.sval{font-size:24px;font-weight:900;margin:5px 0 3px}
+.ssub{font-size:11px;color:var(--text2)}
+.cup{color:var(--ok)} .cdn{color:var(--err)} .cnu{color:var(--text)} .cor{color:var(--primary)}
+
+/* ── FORMS ── */
+.fr{display:grid;gap:12px;margin-bottom:12px}
+.fr2{grid-template-columns:1fr 1fr} .fr3{grid-template-columns:1fr 1fr 1fr}
+.if{padding:10px 12px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:7px;color:var(--text);font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.if:focus{border-color:var(--primary)}
+.if option{background:var(--bg3)}
+.lbl{font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:700;letter-spacing:1px;display:block}
+.fld{display:flex;flex-direction:column}
+.btn{padding:9px 18px;border:none;border-radius:7px;cursor:pointer;font-size:12px;
+  font-weight:700;letter-spacing:.5px;transition:all .2s}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-o{background:var(--primary);color:#fff}
+.btn-o:hover{background:var(--primary-dark)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+.btn-red{background:var(--err);color:#fff}
+
+/* ── LEVEL CARDS ── */
+.lvl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px}
+.lcard{border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;
+  cursor:pointer;transition:all .2s;position:relative}
+.lcard:hover{transform:translateY(-2px)}
+.lcard.beg{border-color:#00C85325} .lcard.beg.sel,.lcard.beg:hover{background:#00C85310;border-color:var(--ok)}
+.lcard.mid{border-color:#FFD60025} .lcard.mid.sel,.lcard.mid:hover{background:#FFD60010;border-color:var(--warn)}
+.lcard.adv{border-color:#FF174425} .lcard.adv.sel,.lcard.adv:hover{background:#FF174410;border-color:var(--err)}
+.lpct{font-size:20px;font-weight:900}
+.lname{font-size:9px;letter-spacing:1.5px;font-weight:800;margin-top:2px}
+.lval{font-size:12px;font-weight:700;color:var(--primary);margin-top:6px}
+.beg .lpct{color:var(--ok)} .mid .lpct{color:var(--warn)} .adv .lpct{color:var(--err)}
+
+/* ── STOP BOXES ── */
+.stops{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.sbox{border-radius:9px;padding:13px;border:1px solid;text-align:center}
+.sbox.sl{border-color:#FF174430;background:#FF174408}
+.sbox.sg{border-color:#00C85330;background:#00C85308}
+.sbox .slbl{font-size:9px;letter-spacing:1.5px;font-weight:800;margin-bottom:3px}
+.sbox.sl .slbl{color:var(--err)} .sbox.sg .slbl{color:var(--ok)}
+.sbox .sv{font-size:17px;font-weight:900}
+.sbox.sl .sv{color:var(--err)} .sbox.sg .sv{color:var(--ok)}
+.sbox .sp{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* ── SLIDER ── */
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--bg4);
+  border-radius:2px;outline:none;cursor:pointer;margin:6px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--primary);cursor:pointer}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:9px 11px;background:var(--bg3);color:var(--text3);font-size:9px;
+  letter-spacing:1.5px;font-weight:800;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#ffffff04}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.5px}
+.pg{background:#00C85318;color:var(--ok)} .pr{background:#FF174418;color:var(--err)}
+.po{background:#FF6B0018;color:var(--primary)} .py{background:#FFD60018;color:var(--warn)}
+
+/* ── CHARTS ── */
+.ch-wrap{position:relative;height:230px}
+.ch-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.fb{padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;
+  border:1px solid var(--border);background:transparent;color:var(--text3);transition:all .2s;letter-spacing:.5px}
+.fb.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.fb:hover:not(.active){border-color:var(--text2);color:var(--text2)}
+
+/* ── GOALS ── */
+.gcard{background:var(--bg3);border-radius:9px;padding:15px;margin-bottom:10px;border:1px solid var(--border)}
+.gh{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.gname{font-weight:700;font-size:13px}
+.pbar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin:7px 0}
+.pfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--primary-light));transition:width .5s}
+.gmeta{display:flex;justify-content:space-between;font-size:10px;color:var(--text3)}
+
+/* ── ADMIN ── */
+.admin-banner{background:linear-gradient(135deg,#120400,#200700);border:1px solid #FF6B0040;
+  border-radius:12px;padding:16px 20px;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.admin-banner svg{flex-shrink:0}
+.admin-banner h3{color:var(--primary);font-size:14px;font-weight:800;letter-spacing:.5px}
+.admin-banner p{color:var(--text3);font-size:11px;margin-top:2px}
+
+/* ── POPUP ── */
+.popup-ov{position:fixed;inset:0;background:#00000095;backdrop-filter:blur(6px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;animation:fi .2s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.popup-box{background:var(--bg2);border:2px solid var(--err);border-radius:16px;
+  padding:32px;max-width:430px;width:90%;text-align:center;animation:su .2s}
+@keyframes su{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.popup-icon{font-size:40px;margin-bottom:14px}
+.popup-box h2{color:var(--err);font-size:17px;font-weight:900;margin-bottom:9px;letter-spacing:.5px}
+.popup-box p{color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:18px}
+.popup-disc{font-size:10px;color:var(--text3);border-top:1px solid var(--border);
+  padding-top:13px;line-height:1.6;text-align:left}
+.popup-btns{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:13px 18px;font-size:13px;font-weight:600;z-index:9999;
+  animation:fi .3s,fadeout .3s 2.7s forwards;box-shadow:0 8px 32px #00000060}
+.toast.tok{border-left:3px solid var(--ok);color:var(--ok)}
+.toast.terr{border-left:3px solid var(--err);color:var(--err)}
+@keyframes fadeout{from{opacity:1}to{opacity:0;pointer-events:none}}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.stitle{font-size:14px;font-weight:700}
+.hidden{display:none!important}
+.page{display:none}.page.active{display:block}
+.empty{text-align:center;padding:36px;color:var(--text3);font-size:13px}
+.empty svg{display:block;margin:0 auto 10px;opacity:.3}
+
+/* ── PROGRESS BLOCK ── */
+.divider{height:1px;background:var(--border);margin:18px 0}
+.npos{color:var(--ok)}.nneg{color:var(--err)}.nneu{color:var(--text)}
+
+
+@media(max-width:900px){.sidebar{width:200px}.main{margin-left:200px}.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.sidebar{display:none}.main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ AUTH ═══════════ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <div class="logo-block">
+      <span class="the">THE</span>
+      <span class="north">NORTH</span>
+      <span class="gestion">GESTIÓN</span>
+      <div class="logo-divider"></div>
+      <span class="sub2">GESTIÓN DE RIESGO · TRADING</span>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Iniciar Sesión</button>
+      <button class="auth-tab" onclick="switchTab('register')">Registrarse</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="fg"><label>USUARIO O EMAIL</label>
+        <input type="text" id="lu" placeholder="tu@email.com" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="fg"><label>CONTRASEÑA</label>
+        <input type="password" id="lp" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-main" onclick="doLogin()">ENTRAR</button>
+      <div class="msg-err" id="loginErr"></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm" class="hidden">
+      <div class="fg"><label>NOMBRE COMPLETO</label>
+        <input type="text" id="rn" placeholder="Tu nombre completo">
+      </div>
+      <div class="fg"><label>EMAIL</label>
+        <input type="email" id="re" placeholder="tu@email.com">
+      </div>
+      <div class="fg"><label>WHATSAPP (con código de país)</label>
+        <input type="tel" id="rw" placeholder="+55 11 99999-9999">
+      </div>
+      <div class="fg"><label>PAÍS</label>
+        <select id="rc">
+          <option value="">Selecciona tu país</option>
+          <option>Argentina</option><option>Bolivia</option><option>Brasil</option>
+          <option>Chile</option><option>Colombia</option><option>Costa Rica</option>
+          <option>Ecuador</option><option>El Salvador</option><option>España</option>
+          <option>Guatemala</option><option>Honduras</option><option>México</option>
+          <option>Nicaragua</option><option>Panamá</option><option>Paraguay</option>
+          <option>Perú</option><option>República Dominicana</option><option>Uruguay</option>
+          <option>Venezuela</option><option>Estados Unidos</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="fg"><label>CONTRASEÑA</label>
+        <input type="password" id="rp" placeholder="Mínimo 6 caracteres">
+      </div>
+      <button class="btn-main" onclick="doRegister()">CREAR CUENTA</button>
+      <div class="msg-err" id="regErr"></div>
+      <div class="msg-ok" id="regOk"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo" style="display:block;padding:20px 18px 16px">
+      <div style="font-size:7px;letter-spacing:4px;color:var(--text3);font-weight:600;line-height:1.4">THE</div>
+      <div style="font-size:15px;font-weight:900;color:#fff;letter-spacing:2px;line-height:1.1">NORTH</div>
+      <div style="font-size:15px;font-weight:900;letter-spacing:2px;line-height:1.1;
+        background:linear-gradient(135deg,#FF6B00,#FF9933);
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">GESTIÓN</div>
+    </div>
+    <div class="sb-user">
+      <strong id="sbName">Trader</strong>
+      Plataforma de gestión de riesgo
+    </div>
+    <nav>
+      <div class="nav-sec">PRINCIPAL</div>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('nueva')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva Operación
+      </div>
+      <div class="nav-item" onclick="showPage('historial')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+        Historial
+      </div>
+      <div class="nav-sec">ANÁLISIS</div>
+      <div class="nav-item" onclick="showPage('graficos')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        Gráficos
+      </div>
+      <div class="nav-item" onclick="showPage('patrimonio')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Evolución Patrimonial
+      </div>
+      <div class="nav-sec">METAS</div>
+      <div class="nav-item" onclick="showPage('metas')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+        Metas y Progreso
+      </div>
+      <div class="nav-sec">CONFIGURACIÓN</div>
+      <div class="nav-item" onclick="showPage('banca')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Mi Banca
+      </div>
+      <div class="nav-item hidden" id="navAdmin" onclick="showPage('admin')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Panel Admin
+      </div>
+    </nav>
+    <div class="sb-foot">
+      <button class="btn-logout" onclick="doLogout()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="topbar-r">
+        <span id="topDate" style="color:var(--text3);font-size:11px"></span>
+        <span class="badge" id="topBadge">ACTIVO</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- ─── DASHBOARD ─── -->
+      <div id="page-dashboard" class="page active">
+        <div class="g4" id="statCards"></div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">RESULTADO SEMANAL</div>
+            <div class="ch-filters">
+              <button class="fb active" onclick="fWeek(this,1)">Esta semana</button>
+              <button class="fb" onclick="fWeek(this,2)">Sem. pasada</button>
+              <button class="fb" onclick="fWeek(this,4)">4 semanas</button>
+            </div>
+            <div class="ch-wrap"><canvas id="cWeekly"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title">RESULTADO MENSUAL</div>
+            <div class="ch-filters">
+              <button class="fb active" onclick="fMonth(this,1)">1M</button>
+              <button class="fb" onclick="fMonth(this,3)">3M</button>
+              <button class="fb" onclick="fMonth(this,6)">6M</button>
+              <button class="fb" onclick="fMonth(this,12)">12M</button>
+            </div>
+            <div class="ch-wrap"><canvas id="cMonthly"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="sh"><div class="stitle">OPERACIONES RECIENTES</div>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('historial')">Ver todas</button>
+          </div>
+          <div class="tw" id="recentTable"></div>
+        </div>
+      </div>
+
+      <!-- ─── NUEVA ─── -->
+      <div id="page-nueva" class="page">
+        <div class="g2" style="align-items:start">
+          <div>
+            <div class="card">
+              <div class="card-title">REGISTRAR OPERACIÓN</div>
+
+              <div class="fr fr2">
+                <div class="fld"><span class="lbl">ACTIVO</span>
+                  <select class="if" id="opActivo">
+                    <option value="BTC OTC">Bitcoin OTC</option>
+                    <option value="ETH OTC">Ethereum OTC</option>
+                    <option value="SOL OTC">Solana OTC</option>
+                    <option value="ADA OTC">Cardano OTC</option>
+                    <option value="XRP OTC">XRP OTC</option>
+                  </select>
+                </div>
+                <div class="fld"><span class="lbl">FECHA DE ENTRADA</span>
+                  <input type="date" class="if" id="opFecha">
+                </div>
+              </div>
+
+              <div class="fr fr2">
+                <div class="fld"><span class="lbl">VALOR DE ENTRADA (USD)</span>
+                  <input type="number" class="if" id="opEntrada" placeholder="0.00" step="0.01" oninput="calcOp()">
+                </div>
+                <div class="fld"><span class="lbl">DIRECCIÓN</span>
+                  <select class="if" id="opDir" onchange="calcOp()">
+                    <option value="COMPRA">COMPRA — Long</option>
+                    <option value="VENTA">VENTA — Short</option>
+                  </select>
+                </div>
+              </div>
+
+              <span class="lbl">NIVEL DE RIESGO — clic para autocompletar entrada</span>
+              <div class="lvl-grid">
+                <div class="lcard beg sel" onclick="selectLvl('beg',this)">
+                  <div class="lpct">1%</div>
+                  <div class="lname" style="color:var(--ok)">PRINCIPIANTE</div>
+                  <div class="lval" id="lv1">$0.00</div>
+                </div>
+                <div class="lcard mid" onclick="selectLvl('mid',this)">
+                  <div class="lpct">2%</div>
+                  <div class="lname" style="color:var(--warn)">INTERMEDIO</div>
+                  <div class="lval" id="lv2">$0.00</div>
+                </div>
+                <div class="lcard adv" onclick="selectLvl('adv',this)">
+                  <div class="lpct">3%</div>
+                  <div class="lname" style="color:var(--err)">AVANZADO</div>
+                  <div class="lval" id="lv3">$0.00</div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <span class="lbl" style="margin-bottom:0">STOP LOSS</span>
+                <span style="font-size:11px;color:var(--err);font-weight:700" id="slLbl">10%</span>
+              </div>
+              <input type="range" id="slRange" min="1" max="30" value="10" step="1"
+                oninput="document.getElementById('slLbl').textContent=this.value+'%';calcOp()">
+
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;margin-bottom:4px">
+                <span class="lbl" style="margin-bottom:0">STOP GAIN</span>
+                <span style="font-size:11px;color:var(--ok);font-weight:700" id="sgLbl">3%</span>
+              </div>
+              <input type="range" id="sgRange" min="1" max="5" value="3" step="0.5"
+                oninput="document.getElementById('sgLbl').textContent=this.value+'%';calcOp()">
+
+              <div class="stops">
+                <div class="sbox sl">
+                  <div class="slbl">STOP LOSS</div>
+                  <div class="sv" id="slVal">$0.00</div>
+                  <div class="sp" id="slPD">— 10%</div>
+                </div>
+                <div class="sbox sg">
+                  <div class="slbl">STOP GAIN</div>
+                  <div class="sv" id="sgVal">$0.00</div>
+                  <div class="sp" id="sgPD">+ 3%</div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="fr fr2">
+                <div class="fld"><span class="lbl">RESULTADO REAL (USD)</span>
+                  <input type="number" class="if" id="opRes" placeholder="0.00" step="0.01">
+                </div>
+                <div class="fld"><span class="lbl">RESULTADO</span>
+                  <select class="if" id="opStatus">
+                    <option value="GANADA">GANADA</option>
+                    <option value="PERDIDA">PERDIDA</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="fld" style="margin-bottom:14px"><span class="lbl">OBSERVACIONES</span>
+                <input type="text" class="if" id="opObs" placeholder="Notas opcionales...">
+              </div>
+
+              <button class="btn btn-o" style="width:100%" onclick="saveOp()">
+                REGISTRAR OPERACIÓN
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">RESUMEN DE BANCA</div>
+              <div id="bancaRes"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">REGLAS DE RIESGO</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.9">
+                <div style="margin-bottom:6px"><span style="color:var(--ok);font-weight:700">Principiante 1%</span>
+                  — Nivel de entrada. Menor exposición al riesgo.</div>
+                <div style="margin-bottom:6px"><span style="color:var(--warn);font-weight:700">Intermedio 2%</span>
+                  — Para traders con experiencia comprobada.</div>
+                <div style="margin-bottom:12px"><span style="color:var(--err);font-weight:700">Avanzado 3%</span>
+                  — Alta exposición. Requiere disciplina estricta.</div>
+                <div class="divider" style="margin:10px 0"></div>
+                <div style="color:var(--text3)">
+                  Un Stop Gain diario superior al <strong style="color:var(--warn)">5% de la banca</strong>
+                  es considerado de <strong style="color:var(--err)">alta exposición al riesgo</strong>
+                  y generará una advertencia.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── HISTORIAL ─── -->
+      <div id="page-historial" class="page">
+        <div class="card">
+          <div class="sh">
+            <div class="stitle">HISTORIAL DE OPERACIONES</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <select class="if" style="width:130px;padding:7px 10px;font-size:11px" id="fAct" onchange="renderHistorial()">
+                <option value="">Todos los activos</option>
+                <option>BTC OTC</option><option>ETH OTC</option>
+                <option>SOL OTC</option><option>ADA OTC</option><option>XRP OTC</option>
+              </select>
+              <select class="if" style="width:120px;padding:7px 10px;font-size:11px" id="fStat" onchange="renderHistorial()">
+                <option value="">Todos</option>
+                <option>GANADA</option><option>PERDIDA</option>
+              </select>
+              <select class="if" style="width:120px;padding:7px 10px;font-size:11px" id="fPer" onchange="renderHistorial()">
+                <option value="">Todo el período</option>
+                <option value="7">Últimos 7 días</option>
+                <option value="30">Últimos 30 días</option>
+                <option value="90">Últimos 90 días</option>
+              </select>
+            </div>
+          </div>
+          <div class="tw" id="histTable"></div>
+        </div>
+      </div>
+
+      <!-- ─── GRÁFICOS ─── -->
+      <div id="page-graficos" class="page">
+        <div class="card">
+          <div class="sh">
+            <div class="stitle">RENDIMIENTO POR PERÍODO</div>
+            <div class="ch-filters">
+              <button class="fb active" onclick="setPG(this,7)">7D</button>
+              <button class="fb" onclick="setPG(this,30)">1M</button>
+              <button class="fb" onclick="setPG(this,90)">3M</button>
+              <button class="fb" onclick="setPG(this,180)">6M</button>
+              <button class="fb" onclick="setPG(this,365)">1A</button>
+              <button class="fb" onclick="setPG(this,0)">Todo</button>
+            </div>
+          </div>
+          <div class="ch-wrap" style="height:260px"><canvas id="cPeriodo"></canvas></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">DISTRIBUCIÓN POR ACTIVO</div>
+            <div class="ch-wrap"><canvas id="cActivos"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title">WIN RATE POR ACTIVO</div>
+            <div class="ch-wrap"><canvas id="cWinrate"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PATRIMONIO ─── -->
+      <div id="page-patrimonio" class="page">
+        <div class="card">
+          <div class="sh">
+            <div class="stitle">EVOLUCIÓN PATRIMONIAL</div>
+            <div class="ch-filters">
+              <button class="fb active" onclick="setPP(this,30)">1M</button>
+              <button class="fb" onclick="setPP(this,90)">3M</button>
+              <button class="fb" onclick="setPP(this,180)">6M</button>
+              <button class="fb" onclick="setPP(this,365)">1A</button>
+              <button class="fb" onclick="setPP(this,0)">Todo</button>
+            </div>
+          </div>
+          <div class="ch-wrap" style="height:280px"><canvas id="cPatrimonio"></canvas></div>
+        </div>
+        <div class="g3">
+          <div class="stat"><div class="slabel">BANCA INICIAL</div>
+            <div class="sval cnu" id="pBI">$0</div><div class="ssub">Al comenzar</div></div>
+          <div class="stat"><div class="slabel">BANCA ACTUAL</div>
+            <div class="sval" id="pBA">$0</div><div class="ssub">Saldo actual</div></div>
+          <div class="stat"><div class="slabel">VARIACIÓN TOTAL</div>
+            <div class="sval" id="pVAR">$0</div><div class="ssub" id="pPCT">0%</div></div>
+        </div>
+      </div>
+
+      <!-- ─── METAS ─── -->
+      <div id="page-metas" class="page">
+        <div class="g2" style="align-items:start">
+          <div>
+            <div class="card">
+              <div class="card-title">NUEVA META</div>
+              <div class="fld" style="margin-bottom:12px"><span class="lbl">NOMBRE</span>
+                <input type="text" class="if" id="mNom" placeholder="Ej: Duplicar banca en 3 meses">
+              </div>
+              <div class="fr fr2">
+                <div class="fld"><span class="lbl">META (USD)</span>
+                  <input type="number" class="if" id="mVal" placeholder="0.00">
+                </div>
+                <div class="fld"><span class="lbl">FECHA LÍMITE</span>
+                  <input type="date" class="if" id="mFecha">
+                </div>
+              </div>
+              <button class="btn btn-o" style="width:100%;margin-top:10px" onclick="addMeta()">
+                AGREGAR META
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">MÉTRICAS CLAVE</div>
+            <div id="metMetrics"></div>
+          </div>
+        </div>
+        <div class="card"><div class="sh"><div class="stitle">MIS METAS</div></div>
+          <div id="metasList"></div>
+        </div>
+      </div>
+
+      <!-- ─── BANCA ─── -->
+      <div id="page-banca" class="page">
+        <div class="card" style="max-width:460px">
+          <div class="card-title">CONFIGURAR MI BANCA</div>
+          <div class="fld" style="margin-bottom:14px"><span class="lbl">BANCA ACTUAL (USD)</span>
+            <input type="number" class="if" id="bancaIn" placeholder="Ej: 1000.00" step="0.01">
+          </div>
+          <div class="fld" style="margin-bottom:14px"><span class="lbl">NIVEL POR DEFECTO</span>
+            <select class="if" id="nivelDef">
+              <option value="beg">Principiante — 1%</option>
+              <option value="mid">Intermedio — 2%</option>
+              <option value="adv">Avanzado — 3%</option>
+            </select>
+          </div>
+          <button class="btn btn-o" onclick="saveBanca()">GUARDAR CONFIGURACIÓN</button>
+          <div id="bancaMsg" style="margin-top:10px;font-size:12px;color:var(--ok)"></div>
+
+        </div>
+      </div>
+
+      <!-- ─── ADMIN ─── -->
+      <div id="page-admin" class="page">
+        <div class="admin-banner">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <div>
+            <h3>PANEL DE ADMINISTRACIÓN</h3>
+            <p>Acceso exclusivo — Base de datos completa de la plataforma</p>
+          </div>
+        </div>
+        <div class="g3" id="adminStats" style="margin-bottom:22px"></div>
+        <div class="card">
+          <div class="sh"><div class="stitle">USUARIOS REGISTRADOS</div>
+            <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Exportar CSV</button>
+          </div>
+          <div class="tw" id="adminUsers"></div>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <div class="sh"><div class="stitle">TODAS LAS OPERACIONES</div></div>
+          <div class="tw" id="adminOps"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══════════ POPUP RIESGO ═══════════ -->
+<div id="riskPopup" class="popup-ov hidden">
+  <div class="popup-box">
+    <div class="popup-icon" style="color:var(--err)">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    </div>
+    <h2>ALTA EXPOSICIÓN AL RIESGO</h2>
+    <p>Tu Stop Gain supera el <strong>5% diario sobre la banca</strong>.<br>
+    Esto representa una exposición considerada <strong>elevada</strong>.</p>
+    <div class="popup-btns">
+      <button class="btn btn-red" onclick="confirmRisk()">Entiendo — continuar</button>
+      <button class="btn btn-ghost" onclick="cancelRisk()">Ajustar valores</button>
+    </div>
+    <div class="popup-disc">
+      <strong style="color:var(--warn)">Aviso importante:</strong> Continuar es una decisión exclusiva del alumno.
+      The North Academy <strong>no recomienda</strong> operar con exposición superior al 5% diario.
+      El trading conlleva riesgo de pérdida de capital. Esta herramienta tiene fines educativos.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+/* ════════ OBFUSCACIÓN BÁSICA (base64) ════════
+   Protege datos de visualización casual en DevTools.
+   Para seguridad real se requiere backend. */
+const _k = 'NorthAcademy_TNT_2024';
+function _enc(data) {
+  try {
+    const s = JSON.stringify(data);
+    let r = '';
+    for (let i=0;i<s.length;i++) r += String.fromCharCode(s.charCodeAt(i) ^ _k.charCodeAt(i%_k.length));
+    return btoa(encodeURIComponent(r));
+  } catch { return btoa(JSON.stringify(data)); }
+}
+function _dec(raw) {
+  if (!raw) return null;
+  try {
+    const r = decodeURIComponent(atob(raw));
+    let s = '';
+    for (let i=0;i<r.length;i++) s += String.fromCharCode(r.charCodeAt(i) ^ _k.charCodeAt(i%_k.length));
+    return JSON.parse(s);
+  } catch {
+    // fallback: try plain JSON (for old data)
+    try { return JSON.parse(atob(raw)); } catch { try { return JSON.parse(raw); } catch { return null; } }
+  }
+}
+
+/* ════════ DB LAYER ════════ */
+const DB = {
+  getUsers()   { return _dec(localStorage.getItem('tna_u'))  || []; },
+  saveUsers(u) { localStorage.setItem('tna_u', _enc(u)); },
+  getOps()     { return _dec(localStorage.getItem('tna_o'))  || []; },
+  saveOps(o)   { localStorage.setItem('tna_o', _enc(o)); },
+  getMetas()   { return _dec(localStorage.getItem('tna_m'))  || []; },
+  saveMetas(m) { localStorage.setItem('tna_m', _enc(m)); },
+  getCU()      { try { return JSON.parse(sessionStorage.getItem('tna_cu')||'null'); } catch { return null; } },
+  setCU(u)     { sessionStorage.setItem('tna_cu', JSON.stringify(u)); },
+  clearCU()    { sessionStorage.removeItem('tna_cu'); },
+};
+
+/* ════════ GLOBALS ════════ */
+let CU = null;          // current user
+let selLvl = 'beg';    // selected level
+let riskCb  = null;     // risk popup callback
+let charts  = {};       // Chart.js instances
+
+/* ════════ INIT ════════ */
+window.onload = () => {
+  const d = new Date();
+  document.getElementById('opFecha').value = d.toISOString().split('T')[0];
+  document.getElementById('topDate').textContent =
+    d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  const saved = DB.getCU();
+  if (saved) { CU = saved; launchApp(); }
+};
+
+/* ════════ AUTH ════════ */
+function switchTab(t) {
+  document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active',(t==='login')===!i));
+  document.getElementById('loginForm').classList.toggle('hidden', t!=='login');
+  document.getElementById('registerForm').classList.toggle('hidden', t!=='register');
+  ['loginErr','regErr','regOk'].forEach(id => document.getElementById(id).textContent='');
+}
+
+function doLogin() {
+  const u = document.getElementById('lu').value.trim().toLowerCase();
+  const p = document.getElementById('lp').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  if (!u || !p) { err.textContent = 'Completa todos los campos.'; return; }
+
+  if (u === 'admin.albano') {
+    if (p !== 'north.123.admintnt') {
+      err.textContent = 'Contraseña de administrador incorrecta.'; return;
+    }
+    CU = { id: '__admin__', name:'Administrador', email:'admin.albano', isAdmin:true };
+    DB.setCU(CU); launchApp(); return;
+  }
+
+  const users = DB.getUsers();
+  const found = users.find(x =>
+    x.email.toLowerCase() === u && x.pass === p
+  );
+  if (!found) { err.textContent = 'Usuario o contraseña incorrectos.'; return; }
+  CU = { ...found };
+  DB.setCU(CU); launchApp();
+}
+
+function doRegister() {
+  const name = document.getElementById('rn').value.trim();
+  const email= document.getElementById('re').value.trim().toLowerCase();
+  const wa   = document.getElementById('rw').value.trim();
+  const ctry = document.getElementById('rc').value;
+  const pass = document.getElementById('rp').value;
+  const err  = document.getElementById('regErr');
+  const ok   = document.getElementById('regOk');
+  err.textContent=''; ok.textContent='';
+
+  if (!name||!email||!wa||!ctry||!pass) { err.textContent='Completa todos los campos.'; return; }
+  if (pass.length<6) { err.textContent='La contraseña debe tener al menos 6 caracteres.'; return; }
+
+  const users = DB.getUsers();
+  if (users.find(x=>x.email===email)) { err.textContent='Este email ya está registrado.'; return; }
+
+  const nu = {
+    id: String(Date.now()),   // STRING para consistencia en comparaciones
+    name, email, whatsapp:wa, country:ctry, pass,
+    banca:1000, nivel:'beg',
+    registeredAt: new Date().toISOString()
+  };
+  users.push(nu);
+  DB.saveUsers(users);
+  ok.textContent='¡Cuenta creada! Ya puedes iniciar sesión.';
+  setTimeout(()=>switchTab('login'), 1800);
+}
+
+function doLogout() {
+  DB.clearCU(); CU = null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('authScreen').style.display='flex';
+}
+
+/* ════════ LAUNCH ════════ */
+function launchApp() {
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('sbName').textContent = CU.name;
+  if (CU.isAdmin) {
+    document.getElementById('navAdmin').classList.remove('hidden');
+    document.getElementById('topBadge').textContent='ADMIN';
+    showPage('admin');
+  } else {
+    syncBancaUI();
+    showPage('dashboard');
+  }
+}
+
+/* ════════ PAGES ════════ */
+const pageTitles = {
+  dashboard:'Dashboard', nueva:'Nueva Operación', historial:'Historial',
+  graficos:'Gráficos', patrimonio:'Evolución Patrimonial', metas:'Metas y Progreso',
+  banca:'Mi Banca', admin:'Panel Admin'
+};
+const navMap = ['dashboard','nueva','historial','graficos','patrimonio','metas','banca','admin'];
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const ni = navMap.indexOf(id);
+  const items = document.querySelectorAll('.nav-item');
+  if (ni>-1 && items[ni]) items[ni].classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[id]||id;
+
+  // Render on demand (delayed for DOM visibility)
+  setTimeout(() => {
+    if (id==='dashboard')   renderDash();
+    if (id==='historial')   renderHistorial();
+    if (id==='graficos')    renderGraficos(7);
+    if (id==='patrimonio')  renderPatrimonio(30);
+    if (id==='metas')       renderMetas();
+    if (id==='admin')       renderAdmin();
+    if (id==='nueva')       { calcOp(); renderBancaRes(); }
+  }, 50);
+}
+
+/* ════════ BANCA ════════ */
+function getUserBanca() {
+  if (!CU || CU.isAdmin) return 1000;
+  const u = DB.getUsers().find(x=>x.id===CU.id);
+  return u ? parseFloat(u.banca)||1000 : 1000;
+}
+
+function saveBanca() {
+  const v = parseFloat(document.getElementById('bancaIn').value);
+  const n = document.getElementById('nivelDef').value;
+  if (!v||v<=0) { toast('Ingresa un valor de banca válido.','err'); return; }
+  const users = DB.getUsers();
+  const idx = users.findIndex(x=>x.id===CU.id);
+  if (idx>-1) { users[idx].banca=v; users[idx].nivel=n; DB.saveUsers(users); }
+  CU.banca=v; CU.nivel=n; DB.setCU(CU);
+  document.getElementById('bancaMsg').textContent='Configuración guardada con éxito.';
+  calcOp();
+}
+
+function syncBancaUI() {
+  const u = DB.getUsers().find(x=>x.id===CU.id);
+  if (u) {
+    document.getElementById('bancaIn').value = u.banca||1000;
+    document.getElementById('nivelDef').value = u.nivel||'beg';
+  }
+}
+
+function renderBancaRes() {
+  const b = getUserBanca();
+  document.getElementById('bancaRes').innerHTML = `
+    <div style="display:grid;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;
+        background:var(--bg3);border-radius:8px;padding:12px 14px">
+        <span style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:1px">BANCA TOTAL</span>
+        <span style="font-size:18px;font-weight:900;color:var(--primary)">${fmt(b)}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="background:#00C85310;border:1px solid #00C85325;border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:9px;color:var(--ok);font-weight:800;letter-spacing:1px;margin-bottom:4px">1% PRINC.</div>
+          <div style="font-size:16px;font-weight:900;color:var(--ok)">${fmt(b*0.01)}</div>
+        </div>
+        <div style="background:#FFD60010;border:1px solid #FFD60025;border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:9px;color:var(--warn);font-weight:800;letter-spacing:1px;margin-bottom:4px">2% INTER.</div>
+          <div style="font-size:16px;font-weight:900;color:var(--warn)">${fmt(b*0.02)}</div>
+        </div>
+        <div style="background:#FF174410;border:1px solid #FF174425;border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:9px;color:var(--err);font-weight:800;letter-spacing:1px;margin-bottom:4px">3% AVANZ.</div>
+          <div style="font-size:16px;font-weight:900;color:var(--err)">${fmt(b*0.03)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ════════ OPERACIÓN CALC ════════ */
+const lvlPct = { beg:0.01, mid:0.02, adv:0.03 };
+
+function selectLvl(lvl, el) {
+  selLvl = lvl;
+  document.querySelectorAll('.lcard').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  // Auto-fill entrada
+  const banca = getUserBanca();
+  const suggested = banca * lvlPct[lvl];
+  document.getElementById('opEntrada').value = suggested.toFixed(2);
+  calcOp();
+}
+
+function calcOp() {
+  const banca = getUserBanca();
+  const pcts = { beg:0.01, mid:0.02, adv:0.03 };
+  document.getElementById('lv1').textContent = fmt(banca*0.01);
+  document.getElementById('lv2').textContent = fmt(banca*0.02);
+  document.getElementById('lv3').textContent = fmt(banca*0.03);
+
+  const entrada = parseFloat(document.getElementById('opEntrada').value)||0;
+  const slPct = parseFloat(document.getElementById('slRange').value)||10;
+  const sgPct = parseFloat(document.getElementById('sgRange').value)||3;
+  const dir   = document.getElementById('opDir').value;
+  const isLong= dir==='COMPRA';
+
+  if (entrada > 0) {
+    const slV = isLong ? entrada*(1-slPct/100) : entrada*(1+slPct/100);
+    const sgV = isLong ? entrada*(1+sgPct/100) : entrada*(1-sgPct/100);
+    document.getElementById('slVal').textContent = fmt(slV);
+    document.getElementById('sgVal').textContent = fmt(sgV);
+  } else {
+    document.getElementById('slVal').textContent = '$0.00';
+    document.getElementById('sgVal').textContent = '$0.00';
+  }
+  document.getElementById('slPD').textContent = `— ${slPct}%`;
+  document.getElementById('sgPD').textContent = `+ ${sgPct}%`;
+}
+
+/* ════════ SAVE OPERATION ════════ */
+function saveOp() {
+  const entrada = parseFloat(document.getElementById('opEntrada').value);
+  const res     = parseFloat(document.getElementById('opRes').value);
+  const status  = document.getElementById('opStatus').value;
+  const banca   = getUserBanca();
+  const slPct   = parseFloat(document.getElementById('slRange').value)||10;
+  const sgPct   = parseFloat(document.getElementById('sgRange').value)||3;
+  const dir     = document.getElementById('opDir').value;
+
+  if (!entrada||entrada<=0) { toast('Ingresa el valor de entrada.','err'); return; }
+  if (isNaN(res)||res<=0)   { toast('Ingresa el resultado real de la operación.','err'); return; }
+
+  const ganancia = entrada*sgPct/100;
+  const pctBanca = (ganancia/banca)*100;
+
+  const doSave = () => {
+    const isLong = dir==='COMPRA';
+    const op = {
+      id: String(Date.now()),
+      userId: String(CU.id),
+      activo: document.getElementById('opActivo').value,
+      fecha: document.getElementById('opFecha').value,
+      dir,
+      nivel: selLvl,
+      pctRisco: lvlPct[selLvl]*100,
+      entrada,
+      slPct, sgPct,
+      slVal: isLong ? entrada*(1-slPct/100) : entrada*(1+slPct/100),
+      sgVal: isLong ? entrada*(1+sgPct/100) : entrada*(1-sgPct/100),
+      resultado: res,
+      status,
+      obs: document.getElementById('opObs').value.trim(),
+      bancaSnapshot: banca,
+      createdAt: new Date().toISOString()
+    };
+
+    const ops = DB.getOps();
+    ops.push(op);
+    DB.saveOps(ops);
+
+    // Reset form
+    document.getElementById('opEntrada').value='';
+    document.getElementById('opRes').value='';
+    document.getElementById('opObs').value='';
+    document.getElementById('opStatus').value='GANADA';
+    selLvl='beg';
+    document.querySelectorAll('.lcard').forEach(c=>c.classList.remove('sel'));
+    document.querySelector('.lcard.beg').classList.add('sel');
+    calcOp();
+
+    toast('Operación registrada con éxito.','ok');
+    // Go to historial to show the new entry
+    setTimeout(()=>showPage('historial'), 400);
+  };
+
+  if (pctBanca>5) {
+    riskCb = doSave;
+    document.getElementById('riskPopup').classList.remove('hidden');
+  } else {
+    doSave();
+  }
+}
+
+function confirmRisk() {
+  document.getElementById('riskPopup').classList.add('hidden');
+  if (riskCb) { riskCb(); riskCb=null; }
+}
+function cancelRisk() {
+  document.getElementById('riskPopup').classList.add('hidden');
+  riskCb=null;
+}
+
+/* ════════ MY OPS ════════ */
+function myOps() {
+  const all = DB.getOps();
+  if (!CU||CU.isAdmin) return all;
+  return all.filter(o => String(o.userId) === String(CU.id));
+}
+function myMetas() {
+  return DB.getMetas().filter(m => String(m.userId) === String(CU.id));
+}
+
+/* ════════ DASHBOARD ════════ */
+function renderDash() {
+  const ops  = myOps();
+  const banca= getUserBanca();
+
+  // All closed ops for P&L
+  const cl   = ops.filter(o=>o.resultado!=null && o.resultado!==undefined);
+  const pnl  = cl.reduce((a,o)=>a+(o.resultado-o.entrada),0);
+  const wins = cl.filter(o=>o.resultado>o.entrada).length;
+  const wr   = cl.length ? (wins/cl.length*100).toFixed(1) : 0;
+
+  // Today
+  const today = new Date().toISOString().split('T')[0];
+  const todayOps = ops.filter(o=>o.fecha===today);
+  const todayPnl = todayOps.reduce((a,o)=>o.resultado!=null?a+(o.resultado-o.entrada):a, 0);
+
+  document.getElementById('statCards').innerHTML = `
+    <div class="stat">
+      <div class="slabel">BANCA ACTUAL</div>
+      <div class="sval cnu">${fmt(banca)}</div>
+      <div class="ssub">Saldo configurado</div>
+    </div>
+    <div class="stat">
+      <div class="slabel">P&amp;L ACUMULADO</div>
+      <div class="sval ${pnl>=0?'cup':'cdn'}">${fmtPN(pnl)}</div>
+      <div class="ssub">${cl.length} operación${cl.length!==1?'es':''} cerrada${cl.length!==1?'s':''}</div>
+    </div>
+    <div class="stat">
+      <div class="slabel">WIN RATE</div>
+      <div class="sval ${parseFloat(wr)>=50?'cup':'cdn'}">${wr}%</div>
+      <div class="ssub">${wins} ganadas / ${cl.length-wins} perdidas</div>
+    </div>
+    <div class="stat">
+      <div class="slabel">P&amp;L HOY</div>
+      <div class="sval ${todayPnl>=0?'cup':'cdn'}">${fmtPN(todayPnl)}</div>
+      <div class="ssub">${todayOps.length} operación${todayOps.length!==1?'es':''} hoy</div>
+    </div>`;
+
+  renderRecentTrades(ops.slice(-6).reverse());
+  buildWeeklyChart(ops, 1);
+  buildMonthlyChart(ops, 1);
+}
+
+function renderRecentTrades(ops) {
+  const el = document.getElementById('recentTable');
+  if (!ops.length) {
+    el.innerHTML=`<div class="empty">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Sin operaciones registradas aún.</div>`;
+    return;
+  }
+  el.innerHTML = buildTable(ops);
+}
+
+function buildTable(ops) {
+  const rows = ops.map(o=>{
+    const pnl = o.resultado!=null ? o.resultado-o.entrada : null;
+    return `<tr>
+      <td style="color:var(--text3)">${o.fecha}</td>
+      <td><span class="pill po">${o.activo}</span></td>
+      <td style="color:${o.dir==='COMPRA'?'var(--ok)':'var(--err)'};font-weight:700;font-size:11px">${o.dir}</td>
+      <td style="color:var(--text);font-weight:700">${fmt(o.entrada)}</td>
+      <td>${pnl!=null?`<span class="${pnl>=0?'npos':'nneg'}" style="font-weight:700">${fmtPN(pnl)}</span>`:'—'}</td>
+      <td>${sPill(o.status)}</td>
+      <td style="font-size:11px;color:var(--text3);max-width:120px;overflow:hidden;text-overflow:ellipsis">${o.obs||'—'}</td>
+      <td><button class="btn btn-red btn-sm" data-opid="${o.id}" onclick="delOp(this)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button></td>
+    </tr>`;
+  }).join('');
+  return `<table>
+    <thead><tr>
+      <th>FECHA</th><th>ACTIVO</th><th>DIR.</th><th>ENTRADA</th>
+      <th>P&amp;L</th><th>STATUS</th><th>OBS.</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function delOp(btn) {
+  // Usa data-opid para evitar problemas de comillas en onclick
+  const id = btn.getAttribute('data-opid');
+  if (!id) { toast('Error: ID no encontrado.','err'); return; }
+
+  // Mini confirmación visual sin confirm() (bloqueado en algunos navegadores)
+  if (btn.dataset.confirm !== '1') {
+    btn.dataset.confirm = '1';
+    btn.style.background = '#cc0000';
+    btn.title = 'Clic de nuevo para confirmar';
+    setTimeout(() => { btn.dataset.confirm=''; btn.style.background=''; btn.title=''; }, 2500);
+    return;
+  }
+
+  try {
+    const all  = DB.getOps();
+    const kept = all.filter(o => String(o.id) !== String(id));
+    DB.saveOps(kept);
+    toast('Operación eliminada.','ok');
+  } catch(e) {
+    toast('Error al eliminar.','err');
+    console.error('delOp error:', e);
+    return;
+  }
+
+  // Actualizar solo la página activa
+  try { renderHistorial(); } catch(e) {}
+  try {
+    if (document.getElementById('page-dashboard').classList.contains('active')) renderDash();
+  } catch(e) {}
+}
+
+function sPill(s) {
+  const m={GANADA:'pg',PERDIDA:'pr'};
+  return `<span class="pill ${m[s]||'po'}">${s}</span>`;
+}
+
+/* ════════ CHARTS ════════ */
+function mkChart(id, type, data, opts={}) {
+  try {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (charts[id]) { try { charts[id].destroy(); } catch{} }
+    charts[id] = new Chart(ctx.getContext('2d'), {
+      type, data,
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#555',font:{size:10}}}},
+        ...opts
+      }
+    });
+  } catch(e) { console.error('Chart error',id,e); }
+}
+
+const scaleOpts = {
+  x:{ticks:{color:'#444',font:{size:9}},grid:{color:'#1c1c1c'}},
+  y:{ticks:{color:'#444',font:{size:9},callback:v=>'$'+v.toFixed(0)},grid:{color:'#1c1c1c'}}
+};
+
+function buildWeeklyChart(ops, weeks) {
+  const labels=[],data=[];
+  for (let i=weeks*7-1;i>=0;i--) {
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    labels.push(d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'}));
+    const pnl=ops.filter(o=>o.fecha===ds&&o.resultado!=null)
+               .reduce((a,o)=>a+(o.resultado-o.entrada),0);
+    data.push(parseFloat(pnl.toFixed(2)));
+  }
+  mkChart('cWeekly','bar',{
+    labels, datasets:[{label:'P&L (USD)',data,
+      backgroundColor:data.map(v=>v>=0?'#00C85330':'#FF174430'),
+      borderColor:data.map(v=>v>=0?'var(--ok)':'var(--err)'),
+      borderWidth:1,borderRadius:3}]
+  },{scales:scaleOpts});
+}
+
+function buildMonthlyChart(ops, months) {
+  const labels=[],data=[];
+  for (let i=months-1;i>=0;i--) {
+    const d=new Date(); d.setMonth(d.getMonth()-i);
+    const ym=d.toISOString().slice(0,7);
+    labels.push(d.toLocaleDateString('es-ES',{month:'short',year:'2-digit'}));
+    const pnl=ops.filter(o=>o.fecha.startsWith(ym)&&o.resultado!=null)
+               .reduce((a,o)=>a+(o.resultado-o.entrada),0);
+    data.push(parseFloat(pnl.toFixed(2)));
+  }
+  mkChart('cMonthly','bar',{
+    labels, datasets:[{label:'P&L mensual (USD)',data,
+      backgroundColor:data.map(v=>v>=0?'#FF6B0030':'#FF174430'),
+      borderColor:data.map(v=>v>=0?'var(--primary)':'var(--err)'),
+      borderWidth:1,borderRadius:3}]
+  },{scales:scaleOpts});
+}
+
+function fWeek(btn,w) {
+  btn.closest('.card').querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); buildWeeklyChart(myOps(),w);
+}
+function fMonth(btn,m) {
+  btn.closest('.card').querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); buildMonthlyChart(myOps(),m);
+}
+
+/* ════════ HISTORIAL ════════ */
+function renderHistorial() {
+  let ops = myOps().slice().reverse();
+  const act  = document.getElementById('fAct')?.value  ||'';
+  const stat = document.getElementById('fStat')?.value ||'';
+  const per  = parseInt(document.getElementById('fPer')?.value)||0;
+  if (act)  ops = ops.filter(o=>o.activo===act);
+  if (stat) ops = ops.filter(o=>o.status===stat);
+  if (per)  { const d=new Date(); d.setDate(d.getDate()-per); ops=ops.filter(o=>new Date(o.fecha)>=d); }
+
+  const el = document.getElementById('histTable');
+  if (!ops.length) {
+    el.innerHTML=`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
+  }
+  el.innerHTML = buildTable(ops);
+}
+
+/* ════════ GRÁFICOS ════════ */
+function renderGraficos(days) {
+  const ops = myOps().filter(o=>o.resultado!=null);
+  const now = new Date();
+  const filtered = days>0 ? ops.filter(o=>(now-new Date(o.fecha))/86400000<=days) : ops;
+
+  const groups={};
+  filtered.forEach(o=>{
+    if(!groups[o.fecha]) groups[o.fecha]=0;
+    groups[o.fecha]+=o.resultado-o.entrada;
+  });
+  const labels=Object.keys(groups).sort();
+  const data=labels.map(l=>parseFloat(groups[l].toFixed(2)));
+
+  mkChart('cPeriodo','line',{
+    labels, datasets:[{label:'P&L (USD)',data,
+      borderColor:'var(--primary)',backgroundColor:'#FF6B0012',fill:true,
+      tension:.4,pointBackgroundColor:'var(--primary)',pointRadius:3}]
+  },{scales:scaleOpts});
+
+  const activos=['BTC OTC','ETH OTC','SOL OTC','ADA OTC','XRP OTC'];
+  const counts=activos.map(a=>ops.filter(o=>o.activo===a).length);
+  mkChart('cActivos','doughnut',{
+    labels:activos, datasets:[{data:counts,
+      // Colores distintivos: naranja BTC, azul-morado ETH, verde SOL, azul ADA, cian XRP
+      backgroundColor:['#F7931A','#627EEA','#14F195','#0033AD','#00AAE4'],
+      borderColor:'#101010',borderWidth:2}]
+  },{plugins:{legend:{position:'bottom',labels:{color:'#666',font:{size:10},padding:10}}}});
+
+  const wrates=activos.map(a=>{
+    const ao=ops.filter(o=>o.activo===a);
+    return ao.length?(ao.filter(o=>o.resultado>o.entrada).length/ao.length*100).toFixed(1):0;
+  });
+  mkChart('cWinrate','bar',{
+    labels:activos, datasets:[{label:'Win Rate %',data:wrates,
+      backgroundColor:'#FF6B0035',borderColor:'var(--primary)',borderWidth:1,borderRadius:3}]
+  },{scales:{
+    x:{ticks:{color:'#444',font:{size:9}},grid:{color:'#1c1c1c'}},
+    y:{ticks:{color:'#444',font:{size:9},callback:v=>v+'%'},grid:{color:'#1c1c1c'},max:100}
+  }});
+}
+function setPG(btn,d){
+  btn.closest('.card').querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderGraficos(d);
+}
+
+/* ════════ PATRIMONIO ════════ */
+function renderPatrimonio(days) {
+  const ops  = myOps().filter(o=>o.resultado!=null).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const banca= getUserBanca();
+
+  // Reconstruct initial banca
+  let initial = banca;
+  ops.forEach(o=>{ initial -= (o.resultado-o.entrada); });
+
+  const now=new Date();
+  const filtered = days>0 ? ops.filter(o=>(now-new Date(o.fecha))/86400000<=days) : ops;
+
+  let running = initial;
+  const labels=['Inicio'], data=[parseFloat(initial.toFixed(2))];
+  const groups={};
+  filtered.forEach(o=>{
+    if(!groups[o.fecha]) groups[o.fecha]=0;
+    groups[o.fecha]+=o.resultado-o.entrada;
+  });
+  Object.keys(groups).sort().forEach(d=>{
+    running+=groups[d];
+    labels.push(d); data.push(parseFloat(running.toFixed(2)));
+  });
+  if (filtered.length) { labels.push('Actual'); data.push(parseFloat(banca.toFixed(2))); }
+
+  mkChart('cPatrimonio','line',{
+    labels, datasets:[{label:'Banca (USD)',data,
+      borderColor:'var(--primary)',backgroundColor:'#FF6B0015',fill:true,
+      tension:.4,pointBackgroundColor:'var(--primary)',pointRadius:3}]
+  },{scales:scaleOpts});
+
+  const variac = banca-initial;
+  const pct    = initial>0?(variac/initial*100).toFixed(2):0;
+  document.getElementById('pBI').textContent = fmt(initial);
+  document.getElementById('pBA').textContent = fmt(banca);
+  document.getElementById('pBA').className   = 'sval '+(variac>=0?'cup':'cdn');
+  document.getElementById('pVAR').textContent = fmtPN(variac);
+  document.getElementById('pVAR').className  = 'sval '+(variac>=0?'cup':'cdn');
+  document.getElementById('pPCT').textContent = (pct>=0?'+':'')+pct+'%';
+}
+function setPP(btn,d){
+  btn.closest('.card').querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderPatrimonio(d);
+}
+
+/* ════════ METAS ════════ */
+function renderMetas() {
+  const metas=myMetas();
+  const banca=getUserBanca();
+  const ops=myOps().filter(o=>o.resultado!=null);
+  const pnl=ops.reduce((a,o)=>a+(o.resultado-o.entrada),0);
+
+  document.getElementById('metMetrics').innerHTML=`
+    <div style="display:grid;gap:0">
+      ${[
+        ['Banca actual', fmt(banca), 'cor'],
+        ['P&L acumulado', fmtPN(pnl), pnl>=0?'cup':'cdn'],
+        ['Metas activas', metas.length, 'cnu'],
+        ['Metas alcanzadas', metas.filter(m=>banca>=m.valor).length, 'cup']
+      ].map(([l,v,c])=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;
+          padding:11px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text2)">${l}</span>
+          <span style="font-weight:800;font-size:14px" class="${c}">${v}</span>
+        </div>`).join('')}
+    </div>`;
+
+  if (!metas.length) {
+    document.getElementById('metasList').innerHTML=
+      '<div class="empty">Sin metas. Crea tu primera meta arriba.</div>'; return;
+  }
+  document.getElementById('metasList').innerHTML = metas.map((m,i)=>{
+    const pct=Math.min(100,(banca/m.valor*100)).toFixed(1);
+    const done=banca>=m.valor;
+    const dl=m.fecha?Math.ceil((new Date(m.fecha)-new Date())/86400000):null;
+    return `<div class="gcard">
+      <div class="gh">
+        <div class="gname" style="color:${done?'var(--ok)':'var(--text)'}">${done?'✓ ':''}${m.nombre}</div>
+        <button class="btn btn-red btn-sm" onclick="delMeta(${i})">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px">
+        <span>${fmt(banca)} / <strong>${fmt(m.valor)}</strong></span>
+        <span style="color:var(--primary);font-weight:800">${pct}%</span>
+      </div>
+      <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+      <div class="gmeta">
+        <span>${done?'META ALCANZADA':'Faltan '+fmt(m.valor-banca)}</span>
+        <span>${dl!=null?(dl<0?'Vencida':dl+' días restantes'):'Sin fecha límite'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addMeta() {
+  const nom=document.getElementById('mNom').value.trim();
+  const val=parseFloat(document.getElementById('mVal').value);
+  const fec=document.getElementById('mFecha').value;
+  if (!nom||!val) { toast('Completa nombre y valor.','err'); return; }
+  const all=DB.getMetas();
+  all.push({id:String(Date.now()),userId:String(CU.id),nombre:nom,valor:val,fecha:fec,createdAt:new Date().toISOString()});
+  DB.saveMetas(all);
+  document.getElementById('mNom').value='';
+  document.getElementById('mVal').value='';
+  document.getElementById('mFecha').value='';
+  renderMetas(); toast('Meta agregada.','ok');
+}
+
+function delMeta(idx) {
+  const mine=myMetas();
+  mine.splice(idx,1);
+  const others=DB.getMetas().filter(m=>String(m.userId)!==String(CU.id));
+  DB.saveMetas([...others,...mine]);
+  renderMetas();
+}
+
+/* ════════ ADMIN ════════ */
+function renderAdmin() {
+  const users=DB.getUsers();
+  const ops=DB.getOps();
+  document.getElementById('adminStats').innerHTML=`
+    <div class="stat"><div class="slabel">USUARIOS REGISTRADOS</div>
+      <div class="sval cor">${users.length}</div></div>
+    <div class="stat"><div class="slabel">TOTAL OPERACIONES</div>
+      <div class="sval cnu">${ops.length}</div></div>
+    <div class="stat"><div class="slabel">PAÍSES</div>
+      <div class="sval cnu">${[...new Set(users.map(u=>u.country).filter(Boolean))].length}</div></div>`;
+
+  // Users table
+  if (!users.length) {
+    document.getElementById('adminUsers').innerHTML='<div class="empty">Sin usuarios registrados.</div>';
+  } else {
+    const rows=users.map(u=>`<tr>
+      <td style="color:var(--text)">${u.name}</td>
+      <td>${u.email}</td><td>${u.whatsapp||'—'}</td>
+      <td><span class="pill po">${u.country||'—'}</span></td>
+      <td style="color:var(--primary);font-weight:700">${fmt(u.banca||1000)}</td>
+      <td style="color:var(--text3);font-size:11px">${u.registeredAt?new Date(u.registeredAt).toLocaleDateString('es-ES'):'—'}</td>
+    </tr>`).join('');
+    document.getElementById('adminUsers').innerHTML=`<table>
+      <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PAÍS</th><th>BANCA</th><th>REGISTRO</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+  }
+
+  // Ops table
+  if (!ops.length) {
+    document.getElementById('adminOps').innerHTML='<div class="empty">Sin operaciones registradas.</div>';
+  } else {
+    const rows=ops.slice().reverse().map(o=>{
+      const u=users.find(x=>String(x.id)===String(o.userId));
+      const pnl=o.resultado!=null?o.resultado-o.entrada:null;
+      return `<tr>
+        <td style="color:var(--text3);font-size:11px">${o.fecha}</td>
+        <td style="color:var(--text);font-size:12px">${u?u.name:'—'}</td>
+        <td><span class="pill po">${o.activo}</span></td>
+        <td style="color:var(--text3)">${o.dir||'—'}</td>
+        <td style="color:var(--text);font-weight:700">${fmt(o.entrada)}</td>
+        <td>${pnl!=null?`<span style="font-weight:700" class="${pnl>=0?'npos':'nneg'}">${fmtPN(pnl)}</span>`:'—'}</td>
+        <td>${sPill(o.status)}</td>
+      </tr>`;
+    }).join('');
+    document.getElementById('adminOps').innerHTML=`<table>
+      <thead><tr><th>FECHA</th><th>USUARIO</th><th>ACTIVO</th><th>DIR.</th><th>ENTRADA</th><th>P&amp;L</th><th>RESULTADO</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+  }
+}
+
+function exportCSV() {
+  const users=DB.getUsers();
+  const rows=[['Nombre','Email','WhatsApp','País','Banca','Registro']];
+  users.forEach(u=>rows.push([u.name,u.email,u.whatsapp||'',u.country||'',u.banca||1000,u.registeredAt||'']));
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='tna_usuarios_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+
+/* ════════ HELPERS ════════ */
+function fmt(v){
+  return '$'+parseFloat(v||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtPN(v){
+  return (v>=0?'+':'')+fmt(v);
+}
+function toast(msg, type='ok') {
+  const t=document.createElement('div');
+  t.className=`toast t${type}`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3100);
+}
+</script>
+</body>
+</html>
