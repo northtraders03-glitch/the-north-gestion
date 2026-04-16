@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>The North Academy ‚Äî Gesti√≥n de Riesgo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -219,9 +222,106 @@ tr:hover td{background:#ffffff04}
 .divider{height:1px;background:var(--border);margin:18px 0}
 .npos{color:var(--ok)}.nneg{color:var(--err)}.nneu{color:var(--text)}
 
+/* ‚îÄ‚îÄ P&L DI√ÅRIO ‚îÄ‚îÄ */
+.pnl-tabs{display:flex;gap:3px;background:var(--bg3);border-radius:8px;padding:3px;margin-bottom:18px}
+.pnl-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text3);
+  border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;transition:all .2s;letter-spacing:.5px}
+.pnl-tab.active{background:var(--primary);color:#fff}
+.pnl-date-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.pnl-date-row input[type=date]{flex:1;min-width:130px;padding:8px 12px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;
+  outline:none;transition:border-color .2s;cursor:pointer}
+.pnl-date-row input[type=date]:focus{border-color:var(--primary)}
+.pnl-date-row .pnl-sep{color:var(--text3);font-size:11px;font-weight:700;white-space:nowrap}
+.pnl-date-row .btn{white-space:nowrap}
+.pnl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pnl-stat{background:var(--bg3);border-radius:9px;padding:14px;text-align:center;
+  border:1px solid var(--border);position:relative;overflow:hidden}
+.pnl-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent-color,var(--primary))}
+.pnl-stat .psl{font-size:9px;color:var(--text3);letter-spacing:1.5px;font-weight:800;margin-bottom:5px}
+.pnl-stat .psv{font-size:22px;font-weight:900;line-height:1}
+.pnl-stat .pss{font-size:10px;color:var(--text3);margin-top:4px}
+.pnl-empty{text-align:center;padding:20px;color:var(--text3);font-size:12px}
+@media(max-width:640px){
+  .pnl-grid{grid-template-columns:repeat(2,1fr)}
+  .pnl-date-row{gap:6px}
+}
+
+
+/* ‚îÄ‚îÄ HAMBURGER ‚îÄ‚îÄ */
+.hamburger{display:none;flex-direction:column;gap:4px;background:transparent;border:none;
+  cursor:pointer;padding:6px;border-radius:6px;transition:all .2s;margin-right:8px}
+.hamburger:hover{background:var(--bg3)}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text);
+  border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* ‚îÄ‚îÄ MOBILE OVERLAY ‚îÄ‚îÄ */
+.mob-overlay{display:none;position:fixed;inset:0;background:#00000080;z-index:99;backdrop-filter:blur(2px)}
+.mob-overlay.open{display:block}
+
+/* ‚îÄ‚îÄ BOTTOM NAV (mobile) ‚îÄ‚îÄ */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
+  border-top:1px solid var(--border);z-index:90;padding:0 0 env(safe-area-inset-bottom,0) 0}
+.bottom-nav-inner{display:flex;justify-content:space-around;align-items:center}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;
+  color:var(--text3);cursor:pointer;transition:all .2s;flex:1;border:none;background:transparent;
+  font-size:9px;font-weight:700;letter-spacing:.5px;min-width:0}
+.bnav-item svg{flex-shrink:0}
+.bnav-item.active{color:var(--primary)}
+.bnav-item span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
 @media(max-width:900px){.sidebar{width:200px}.main{margin-left:200px}.g4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.sidebar{display:none}.main{margin-left:0}}
+@media(max-width:640px){
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;
+    transform:translateX(-100%);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+    z-index:100;width:260px;
+  }
+  .sidebar.mob-open{transform:translateX(0)}
+  .main{margin-left:0;padding-bottom:62px}
+  .hamburger{display:flex}
+  .bottom-nav{display:block}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr}
+  .fr2{grid-template-columns:1fr}
+  .fr3{grid-template-columns:1fr}
+  .content{padding:16px 14px}
+  .topbar{padding:12px 14px}
+  .topbar h1{font-size:14px}
+  .card{padding:14px}
+  .lvl-grid{grid-template-columns:repeat(3,1fr)}
+  .stops{grid-template-columns:1fr 1fr}
+  .sval{font-size:18px}
+  .ch-wrap{height:180px}
+  .popup-box{padding:22px 16px;margin:12px}
+  .auth-box{padding:26px 18px}
+  #topDate{display:none}
+  /* Scroll suave e touch */
+  .main{-webkit-overflow-scrolling:touch}
+  /* Tabelas no mobile scrollam horizontalmente */
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:480px}
+  /* Bot√µes maiores para touch */
+  .btn{min-height:38px}
+  .btn-main{min-height:46px}
+  .if{min-height:42px}
+  /* Stat cards: 2 colunas no mobile */
+  #statCards{grid-template-columns:repeat(2,1fr)!important}
+  /* Cards patrimoniais menores */
+  .sval{font-size:20px}
+  /* Admin tab: scroll horizontal */
+  .admin-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* Filtros de gr√°fico: scroll horizontal */
+  .ch-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  /* Popup full width no mobile */
+  .popup-box{max-width:100%;border-radius:12px}
+}
 </style>
 </head>
 <body>
@@ -334,7 +434,7 @@ tr:hover td{background:#ffffff04}
       <div class="nav-sec">CONFIGURACI√ìN</div>
       <div class="nav-item" onclick="showPage('banca')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Mi Banca
+        Mi Cuenta
       </div>
       <div class="nav-item hidden" id="navAdmin" onclick="showPage('admin')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -352,7 +452,12 @@ tr:hover td{background:#ffffff04}
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <h1 id="pageTitle">Dashboard</h1>
+      <div style="display:flex;align-items:center;gap:4px">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
+        </button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
       <div class="topbar-r">
         <span id="topDate" style="color:var(--text3);font-size:11px"></span>
         <span class="badge" id="topBadge">ACTIVO</span>
@@ -363,6 +468,47 @@ tr:hover td{background:#ffffff04}
       <!-- ‚îÄ‚îÄ‚îÄ DASHBOARD ‚îÄ‚îÄ‚îÄ -->
       <div id="page-dashboard" class="page active">
         <div class="g4" id="statCards"></div>
+
+        <!-- P&L DIARIO / PER√çODO -->
+        <div class="card" style="margin-bottom:22px">
+          <div class="sh" style="margin-bottom:14px">
+            <div class="stitle" style="display:flex;align-items:center;gap:8px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              GANANCIAS DEL D√çA / PER√çODO
+            </div>
+          </div>
+
+          <!-- Pesta√±as D√≠a / Per√≠odo -->
+          <div class="pnl-tabs">
+            <button class="pnl-tab active" id="pnlTabDia" onclick="switchPnlTab('dia')">üìÖ Por D√≠a</button>
+            <button class="pnl-tab" id="pnlTabPer" onclick="switchPnlTab('periodo')">üìÜ Por Per√≠odo</button>
+          </div>
+
+          <!-- Modo D√≠a -->
+          <div id="pnlModoDia">
+            <div class="pnl-date-row">
+              <input type="date" id="pnlDiaDate" onchange="renderPnlDia()">
+              <button class="btn btn-ghost btn-sm" onclick="setPnlHoje()">Hoy</button>
+              <button class="btn btn-ghost btn-sm" onclick="pnlDiaStep(-1)">‚óÄ</button>
+              <button class="btn btn-ghost btn-sm" onclick="pnlDiaStep(1)">‚ñ∂</button>
+            </div>
+            <div class="pnl-grid" id="pnlDiaGrid"></div>
+          </div>
+
+          <!-- Modo Per√≠odo -->
+          <div id="pnlModoPer" style="display:none">
+            <div class="pnl-date-row">
+              <input type="date" id="pnlPerDe" onchange="renderPnlPer()">
+              <span class="pnl-sep">hasta</span>
+              <input type="date" id="pnlPerAte" onchange="renderPnlPer()">
+              <button class="btn btn-ghost btn-sm" onclick="setPnlPer(7)">7D</button>
+              <button class="btn btn-ghost btn-sm" onclick="setPnlPer(15)">15D</button>
+              <button class="btn btn-ghost btn-sm" onclick="setPnlPer(30)">30D</button>
+            </div>
+            <div class="pnl-grid" id="pnlPerGrid"></div>
+          </div>
+        </div>
+
         <div class="g2">
           <div class="card">
             <div class="card-title">RESULTADO SEMANAL</div>
@@ -498,7 +644,7 @@ tr:hover td{background:#ffffff04}
 
           <div>
             <div class="card" style="margin-bottom:16px">
-              <div class="card-title">RESUMEN DE BANCA</div>
+              <div class="card-title">RESUMEN DE CUENTA</div>
               <div id="bancaRes"></div>
             </div>
             <div class="card">
@@ -512,7 +658,7 @@ tr:hover td{background:#ffffff04}
                   ‚Äî Alta exposici√≥n. Requiere disciplina estricta.</div>
                 <div class="divider" style="margin:10px 0"></div>
                 <div style="color:var(--text3)">
-                  Un Stop Gain diario superior al <strong style="color:var(--warn)">5% de la banca</strong>
+                  Un Stop Gain diario superior al <strong style="color:var(--warn)">5% de la cuenta</strong>
                   es considerado de <strong style="color:var(--err)">alta exposici√≥n al riesgo</strong>
                   y generar√° una advertencia.
                 </div>
@@ -593,9 +739,9 @@ tr:hover td{background:#ffffff04}
           <div class="ch-wrap" style="height:280px"><canvas id="cPatrimonio"></canvas></div>
         </div>
         <div class="g3">
-          <div class="stat"><div class="slabel">BANCA INICIAL</div>
+          <div class="stat"><div class="slabel">CUENTA INICIAL</div>
             <div class="sval cnu" id="pBI">$0</div><div class="ssub">Al comenzar</div></div>
-          <div class="stat"><div class="slabel">BANCA ACTUAL</div>
+          <div class="stat"><div class="slabel">CUENTA ACTUAL</div>
             <div class="sval" id="pBA">$0</div><div class="ssub">Saldo actual</div></div>
           <div class="stat"><div class="slabel">VARIACI√ìN TOTAL</div>
             <div class="sval" id="pVAR">$0</div><div class="ssub" id="pPCT">0%</div></div>
@@ -609,7 +755,7 @@ tr:hover td{background:#ffffff04}
             <div class="card">
               <div class="card-title">NUEVA META</div>
               <div class="fld" style="margin-bottom:12px"><span class="lbl">NOMBRE</span>
-                <input type="text" class="if" id="mNom" placeholder="Ej: Duplicar banca en 3 meses">
+                <input type="text" class="if" id="mNom" placeholder="Ej: Duplicar cuenta en 3 meses">
               </div>
               <div class="fr fr2">
                 <div class="fld"><span class="lbl">META (USD)</span>
@@ -634,11 +780,11 @@ tr:hover td{background:#ffffff04}
         </div>
       </div>
 
-      <!-- ‚îÄ‚îÄ‚îÄ BANCA ‚îÄ‚îÄ‚îÄ -->
+      <!-- ‚îÄ‚îÄ‚îÄ CUENTA ‚îÄ‚îÄ‚îÄ -->
       <div id="page-banca" class="page">
         <div class="card" style="max-width:460px">
-          <div class="card-title">CONFIGURAR MI BANCA</div>
-          <div class="fld" style="margin-bottom:14px"><span class="lbl">BANCA ACTUAL (USD)</span>
+          <div class="card-title">CONFIGURAR MI CUENTA</div>
+          <div class="fld" style="margin-bottom:14px"><span class="lbl">CUENTA ACTUAL (USD)</span>
             <input type="number" class="if" id="bancaIn" placeholder="Ej: 1000.00" step="0.01">
           </div>
           <div class="fld" style="margin-bottom:14px"><span class="lbl">NIVEL POR DEFECTO</span>
@@ -680,6 +826,36 @@ tr:hover td{background:#ffffff04}
 
     </div><!-- /content -->
   </div><!-- /main -->
+
+  <!-- Mobile overlay backdrop -->
+  <div class="mob-overlay" id="mobOverlay" onclick="closeMobileMenu()"></div>
+
+  <!-- Bottom Navigation (mobile only) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="bottom-nav-inner">
+      <button class="bnav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Inicio</span>
+      </button>
+      <button class="bnav-item" data-page="nueva" onclick="showPage('nueva')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Nueva Op.</span>
+      </button>
+      <button class="bnav-item" data-page="historial" onclick="showPage('historial')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+        <span>Historial</span>
+      </button>
+      <button class="bnav-item" data-page="graficos" onclick="showPage('graficos')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        <span>Gr√°ficos</span>
+      </button>
+      <button class="bnav-item" data-page="metas" onclick="showPage('metas')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+        <span>Metas</span>
+      </button>
+    </div>
+  </nav>
+
 </div><!-- /app -->
 
 <!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê POPUP RIESGO ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
@@ -692,7 +868,7 @@ tr:hover td{background:#ffffff04}
       </svg>
     </div>
     <h2>ALTA EXPOSICI√ìN AL RIESGO</h2>
-    <p>Tu Stop Gain supera el <strong>5% diario sobre la banca</strong>.<br>
+    <p>Tu Stop Gain supera el <strong>5% diario sobre la cuenta</strong>.<br>
     Esto representa una exposici√≥n considerada <strong>elevada</strong>.</p>
     <div class="popup-btns">
       <button class="btn btn-red" onclick="confirmRisk()">Entiendo ‚Äî continuar</button>
@@ -824,8 +1000,14 @@ function doRegister() {
 
 function doLogout() {
   DB.clearCU(); CU = null;
+  closeMobileMenu();
   document.getElementById('app').style.display='none';
   document.getElementById('authScreen').style.display='flex';
+  // Reset bottom nav
+  document.getElementById('bottomNav').style.display='';
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  const first = document.querySelector('.bnav-item[data-page="dashboard"]');
+  if(first) first.classList.add('active');
 }
 
 /* ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê LAUNCH ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê */
@@ -833,9 +1015,13 @@ function launchApp() {
   document.getElementById('authScreen').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('sbName').textContent = CU.name;
+  // Set today's date in topbar
+  const now = new Date();
+  document.getElementById('topDate').textContent = now.toLocaleDateString('es-ES',{weekday:'short',day:'2-digit',month:'short'});
   if (CU.isAdmin) {
     document.getElementById('navAdmin').classList.remove('hidden');
     document.getElementById('topBadge').textContent='ADMIN';
+    document.getElementById('bottomNav').style.display='none';
     showPage('admin');
   } else {
     syncBancaUI();
@@ -847,11 +1033,37 @@ function launchApp() {
 const pageTitles = {
   dashboard:'Dashboard', nueva:'Nueva Operaci√≥n', historial:'Historial',
   graficos:'Gr√°ficos', patrimonio:'Evoluci√≥n Patrimonial', metas:'Metas y Progreso',
-  banca:'Mi Banca', admin:'Panel Admin'
+  banca:'Mi Cuenta', admin:'Panel Admin'
 };
 const navMap = ['dashboard','nueva','historial','graficos','patrimonio','metas','banca','admin'];
 
+function toggleMobileMenu() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('mobOverlay');
+  const btn = document.getElementById('hamburgerBtn');
+  const isOpen = sidebar.classList.contains('mob-open');
+  if (isOpen) {
+    sidebar.classList.remove('mob-open');
+    overlay.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    sidebar.classList.add('mob-open');
+    overlay.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+function closeMobileMenu() {
+  const s = document.querySelector('.sidebar');
+  const o = document.getElementById('mobOverlay');
+  const b = document.getElementById('hamburgerBtn');
+  if(s) s.classList.remove('mob-open');
+  if(o) o.classList.remove('open');
+  if(b) b.classList.remove('open');
+}
+
 function showPage(id) {
+  closeMobileMenu();
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -859,6 +1071,10 @@ function showPage(id) {
   const items = document.querySelectorAll('.nav-item');
   if (ni>-1 && items[ni]) items[ni].classList.add('active');
   document.getElementById('pageTitle').textContent = pageTitles[id]||id;
+  // Update bottom nav active state
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  const bnItem = document.querySelector(`.bnav-item[data-page="${id}"]`);
+  if (bnItem) bnItem.classList.add('active');
 
   // Render on demand (delayed for DOM visibility)
   setTimeout(() => {
@@ -882,7 +1098,7 @@ function getUserBanca() {
 function saveBanca() {
   const v = parseFloat(document.getElementById('bancaIn').value);
   const n = document.getElementById('nivelDef').value;
-  if (!v||v<=0) { toast('Ingresa un valor de banca v√°lido.','err'); return; }
+  if (!v||v<=0) { toast('Ingresa un valor de cuenta v√°lido.','err'); return; }
   const users = DB.getUsers();
   const idx = users.findIndex(x=>x.id===CU.id);
   if (idx>-1) { users[idx].banca=v; users[idx].nivel=n; DB.saveUsers(users); }
@@ -905,7 +1121,7 @@ function renderBancaRes() {
     <div style="display:grid;gap:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;
         background:var(--bg3);border-radius:8px;padding:12px 14px">
-        <span style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:1px">BANCA TOTAL</span>
+        <span style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:1px">CUENTA TOTAL</span>
         <span style="font-size:18px;font-weight:900;color:var(--primary)">${fmt(b)}</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
@@ -1066,7 +1282,7 @@ function renderDash() {
 
   document.getElementById('statCards').innerHTML = `
     <div class="stat">
-      <div class="slabel">BANCA ACTUAL</div>
+      <div class="slabel">CUENTA ACTUAL</div>
       <div class="sval cnu">${fmt(banca)}</div>
       <div class="ssub">Saldo configurado</div>
     </div>
@@ -1089,12 +1305,129 @@ function renderDash() {
   renderRecentTrades(ops.slice(-6).reverse());
   buildWeeklyChart(ops, 1);
   buildMonthlyChart(ops, 1);
+  // Inicializa P&L di√°rio
+  initPnlDates();
+  renderPnlDia();
+}
+
+/* ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê P&L DI√ÅRIO / PER√çODO ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê */
+function isoHoje() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function initPnlDates() {
+  const hoje = isoHoje();
+  const diaEl = document.getElementById('pnlDiaDate');
+  if (diaEl && !diaEl.value) diaEl.value = hoje;
+  const deEl  = document.getElementById('pnlPerDe');
+  const ateEl = document.getElementById('pnlPerAte');
+  if (deEl && !deEl.value) {
+    // default: √∫ltimos 7 dias
+    const d = new Date(); d.setDate(d.getDate()-6);
+    deEl.value = d.toISOString().split('T')[0];
+  }
+  if (ateEl && !ateEl.value) ateEl.value = hoje;
+}
+
+function switchPnlTab(tab) {
+  const isDia = tab==='dia';
+  document.getElementById('pnlTabDia').classList.toggle('active', isDia);
+  document.getElementById('pnlTabPer').classList.toggle('active', !isDia);
+  document.getElementById('pnlModoDia').style.display = isDia ? '' : 'none';
+  document.getElementById('pnlModoPer').style.display = isDia ? 'none' : '';
+  if (isDia) renderPnlDia(); else renderPnlPer();
+}
+
+function setPnlHoje() {
+  document.getElementById('pnlDiaDate').value = isoHoje();
+  renderPnlDia();
+}
+
+function pnlDiaStep(dir) {
+  const el = document.getElementById('pnlDiaDate');
+  const d  = el.value ? new Date(el.value+'T12:00:00') : new Date();
+  d.setDate(d.getDate() + dir);
+  el.value = d.toISOString().split('T')[0];
+  renderPnlDia();
+}
+
+function setPnlPer(dias) {
+  const hoje = isoHoje();
+  const d = new Date(); d.setDate(d.getDate()-(dias-1));
+  document.getElementById('pnlPerDe').value  = d.toISOString().split('T')[0];
+  document.getElementById('pnlPerAte').value = hoje;
+  renderPnlPer();
+}
+
+function calcPnlStats(ops) {
+  const closed = ops.filter(o => o.resultado != null);
+  const entradas = ops.length;
+  const ganhas   = closed.filter(o => o.status === 'GANADA').length;
+  const perdidas = closed.filter(o => o.status === 'PERDIDA').length;
+  const pnl      = closed.reduce((a,o) => a + (o.resultado - o.entrada), 0);
+  const wr       = closed.length ? (ganhas / closed.length * 100).toFixed(1) : null;
+  return { entradas, ganhas, perdidas, pnl, wr };
+}
+
+function buildPnlGrid(stats, label) {
+  const { entradas, ganhas, perdidas, pnl, wr } = stats;
+  if (entradas === 0) {
+    return `<div class="pnl-empty" style="grid-column:1/-1">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 8px;display:block;opacity:.3"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Sin operaciones en ${label}
+    </div>`;
+  }
+  const pnlCls = pnl >= 0 ? 'cup' : 'cdn';
+  const pnlClr = pnl >= 0 ? 'var(--ok)' : 'var(--err)';
+  const wrClr  = wr !== null && parseFloat(wr) >= 50 ? 'var(--ok)' : 'var(--err)';
+  return `
+    <div class="pnl-stat" style="--accent-color:var(--primary)">
+      <div class="psl">ENTRADAS</div>
+      <div class="psv cor">${entradas}</div>
+      <div class="pss">operaciones</div>
+    </div>
+    <div class="pnl-stat" style="--accent-color:var(--ok)">
+      <div class="psl">GANADAS</div>
+      <div class="psv" style="color:var(--ok)">${ganhas}</div>
+      <div class="pss">${wr !== null ? wr+'% win rate' : '‚Äî'}</div>
+    </div>
+    <div class="pnl-stat" style="--accent-color:var(--err)">
+      <div class="psl">PERDIDAS</div>
+      <div class="psv" style="color:var(--err)">${perdidas}</div>
+      <div class="pss">${entradas > 0 ? ((perdidas/entradas)*100).toFixed(1)+'% de ops' : '‚Äî'}</div>
+    </div>
+    <div class="pnl-stat" style="--accent-color:${pnlClr}">
+      <div class="psl">GANANCIA / P√âRDIDA</div>
+      <div class="psv ${pnlCls}">${fmtPN(pnl)}</div>
+      <div class="pss">${label}</div>
+    </div>`;
+}
+
+function renderPnlDia() {
+  initPnlDates();
+  const date = document.getElementById('pnlDiaDate').value;
+  if (!date) return;
+  const ops  = myOps().filter(o => o.fecha === date);
+  const d    = new Date(date+'T12:00:00');
+  const label= d.toLocaleDateString('es-ES',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('pnlDiaGrid').innerHTML = buildPnlGrid(calcPnlStats(ops), label);
+}
+
+function renderPnlPer() {
+  initPnlDates();
+  const de  = document.getElementById('pnlPerDe').value;
+  const ate = document.getElementById('pnlPerAte').value;
+  if (!de || !ate) return;
+  const ops = myOps().filter(o => o.fecha >= de && o.fecha <= ate);
+  const d1  = new Date(de+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'});
+  const d2  = new Date(ate+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'});
+  document.getElementById('pnlPerGrid').innerHTML = buildPnlGrid(calcPnlStats(ops), `${d1} ‚Üí ${d2}`);
 }
 
 function renderRecentTrades(ops) {
   const el = document.getElementById('recentTable');
   if (!ops.length) {
-    el.innerHTML=`<div class="empty">
+    el.innerHTML<`<div class="empty">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Sin operaciones registradas a√∫n.</div>`;
     return;
@@ -1183,55 +1516,7 @@ function mkChart(id, type, data, opts={}) {
 
 const scaleOpts = {
   x:{ticks:{color:'#444',font:{size:9}},grid:{color:'#1c1c1c'}},
-  y:{ticks:{color:'#444',font:{size:9},callback:v=>'$'+v.toFixed(0)},grid:{color:'#1c1c1c'}}
-};
-
-function buildWeeklyChart(ops, weeks) {
-  const labels=[],data=[];
-  for (let i=weeks*7-1;i>=0;i--) {
-    const d=new Date(); d.setDate(d.getDate()-i);
-    const ds=d.toISOString().split('T')[0];
-    labels.push(d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'}));
-    const pnl=ops.filter(o=>o.fecha===ds&&o.resultado!=null)
-               .reduce((a,o)=>a+(o.resultado-o.entrada),0);
-    data.push(parseFloat(pnl.toFixed(2)));
-  }
-  mkChart('cWeekly','bar',{
-    labels, datasets:[{label:'P&L (USD)',data,
-      backgroundColor:data.map(v=>v>=0?'#00C85330':'#FF174430'),
-      borderColor:data.map(v=>v>=0?'var(--ok)':'var(--err)'),
-      borderWidth:1,borderRadius:3}]
-  },{scales:scaleOpts});
-}
-
-function buildMonthlyChart(ops, months) {
-  const labels=[],data=[];
-  for (let i=months-1;i>=0;i--) {
-    const d=new Date(); d.setMonth(d.getMonth()-i);
-    const ym=d.toISOString().slice(0,7);
-    labels.push(d.toLocaleDateString('es-ES',{month:'short',year:'2-digit'}));
-    const pnl=ops.filter(o=>o.fecha.startsWith(ym)&&o.resultado!=null)
-               .reduce((a,o)=>a+(o.resultado-o.entrada),0);
-    data.push(parseFloat(pnl.toFixed(2)));
-  }
-  mkChart('cMonthly','bar',{
-    labels, datasets:[{label:'P&L mensual (USD)',data,
-      backgroundColor:data.map(v=>v>=0?'#FF6B0030':'#FF174430'),
-      borderColor:data.map(v=>v>=0?'var(--primary)':'var(--err)'),
-      borderWidth:1,borderRadius:3}]
-  },{scales:scaleOpts});
-}
-
-function fWeek(btn,w) {
-  btn.closest('.card').querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); buildWeeklyChart(myOps(),w);
-}
-function fMonth(btn,m) {
-  btn.closest('.card').querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); buildMonthlyChart(myOps(),m);
-}
-
-/* ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê HISTORIAL ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê */
+  y:{ticks:{color:'#444',font:{size:9},callback:v=<¯úêú≠ÿπ—Ω•·ïê†¿•Ù±ù…•êÈÌçΩ±Ω»Ëúå≈å≈å≈åùıÙ)ÙÏ()ô’πç—•Ω∏Åâ’•±ë]ïï≠±Â°Ö…–°Ω¡Ã∞Å›ïï≠Ã§ÅÏ(ÄÅçΩπÕ–Å±Öâï±Ãımt±ëÖ—ÑımtÏ(ÄÅôΩ»Ä°±ï–Å§ı›ïï≠Ã®‹¥ƒÌ§¯Ù¿Ì§¥¥§ÅÏ(ÄÄÄÅçΩπÕ–Åêıπï‹ÅÖ—î†§ÏÅêπÕï—Ö—î°êπùï—Ö—î†§µ§§Ï(ÄÄÄÅçΩπÕ–ÅëÃıêπ—Ω%M=M—…•πú†§πÕ¡±•–†ùPú•l¡tÏ(ÄÄÄÅ±Öâï±Ãπ¡’Õ†°êπ—Ω1ΩçÖ±ïÖ—ïM—…•πú†ùïÃµLú±Ì›ïï≠ëÖ‰ËùÕ°Ω…–ú±ëÖ‰Ëùπ’µï…•åùÙ§§Ï(ÄÄÄÅçΩπÕ–Å¡π∞ıΩ¡Ãπô•±—ï»°ºÙ˘ºπôïç°ÑÙÙıëÃòôºπ…ïÕ’±—ÖëºÑıπ’±∞§(ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄπ…ïë’çî†°Ñ±º§Ù˘Ñ¨°ºπ…ïÕ’±—Öëºµºπïπ—…ÖëÑ§∞¿§Ï(ÄÄÄÅëÖ—Ñπ¡’Õ†°¡Ö…Õï±ΩÖ–°¡π∞π—Ω•·ïê†»§§§Ï(ÄÅÙ(ÄÅµ≠°Ö…–†ùç]ïï≠±‰ú∞ùâÖ»ú±Ï(ÄÄÄÅ±Öâï±Ã∞ÅëÖ—ÖÕï—ÃÈmÌ±Öâï∞Ëù@ô0Ä°UM§ú±ëÖ—Ñ∞(ÄÄÄÄÄÅâÖç≠ù…Ω’πëΩ±Ω»ÈëÖ—ÑπµÖ¿°ÿÙ˘ÿ¯Ù¿¸úå¿¡‡‘ÃÃ¿úËúçƒ‹––Ã¿ú§∞(ÄÄÄÄÄÅâΩ…ëï…Ω±Ω»ÈëÖ—ÑπµÖ¿°ÿÙ˘ÿ¯Ù¿¸ùŸÖ»†¥µΩ¨§úËùŸÖ»†¥µï…»§ú§∞(ÄÄÄÄÄÅâΩ…ëï…]•ë—†Ëƒ±âΩ…ëï…IÖë•’ÃËÕıt(ÄÅÙ±ÌÕçÖ±ïÃÈÕçÖ±ï=¡—ÕÙ§Ï)Ù()ô’πç—•Ω∏Åâ’•±ë5Ωπ—°±Â°Ö…–°Ω¡Ã∞ÅµΩπ—°Ã§ÅÏ(ÄÅçΩπÕ–Å±Öâï±Ãımt±ëÖ—ÑımtÏ(ÄÅôΩ»Ä°±ï–Å§ıµΩπ—°Ã¥ƒÌ§¯Ù¿Ì§¥¥§ÅÏ(ÄÄÄÅçΩπÕ–Åêıπï‹ÅÖ—î†§ÏÅêπÕï—5Ωπ—†°êπùï—5Ωπ—††§µ§§Ï(ÄÄÄÅçΩπÕ–ÅÂ¥ıêπ—Ω%M=M—…•πú†§πÕ±•çî†¿∞‹§Ï(ÄÄÄÅ±Öâï±Ãπ¡’Õ†°êπ—Ω1ΩçÖ±ïÖ—ïM—…•πú†ùïÃµLú±ÌµΩπ—†ËùÕ°Ω…–ú±ÂïÖ»Ëú»µë•ù•–ùÙ§§Ï(ÄÄÄÅçΩπÕ–Å¡π∞ıΩ¡Ãπô•±—ï»°ºÙ˘ºπôïç°ÑπÕ—Ö…—Õ]•—†°Â¥§òôºπ…ïÕ’±—ÖëºÑıπ’±∞§(ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄπ…ïë’çî†°Ñ±º§Ù˘Ñ¨°ºπ…ïÕ’±—Öëºµºπïπ—…ÖëÑ§∞¿§Ï(ÄÄÄÅëÖ—Ñπ¡’Õ†°¡Ö…Õï±ΩÖ–°¡π∞π—Ω•·ïê†»§§§Ï(ÄÅÙ(ÄÅµ≠°Ö…–†ùç5Ωπ—°±‰ú∞ùâÖ»ú±Ï(ÄÄÄÅ±Öâï±Ã∞ÅëÖ—ÖÕï—ÃÈmÌ±Öâï∞Ëù@ô0ÅµïπÕ’Ö∞Ä°UM§ú±ëÖ—Ñ∞(ÄÄÄÄÄÅâÖç≠ù…Ω’πëΩ±Ω»ÈëÖ—ÑπµÖ¿°ÿÙ˘ÿ¯Ù¿¸úçŸ¿¿Ã¿úËúçƒ‹––Ã¿ú§∞(ÄÄÄÄÄÅâΩ…ëï…Ω±Ω»ÈëÖ—ÑπµÖ¿°ÿÙ˘ÿ¯Ù¿¸ùŸÖ»†¥µ¡…•µÖ…‰§úËùŸÖ»†¥µï…»§ú§∞(ÄÄÄÄÄÅâΩ…ëï…]•ë—†Ëƒ±âΩ…ëï…IÖë•’ÃËÕıt(ÄÅÙ±ÌÕçÖ±ïÃÈÕçÖ±ï=¡—ÕÙ§Ï)Ù()ô’πç—•Ω∏Åô]ïï¨°â—∏±‹§ÅÏ(ÄÅâ—∏πç±ΩÕïÕ–†úπçÖ…êú§π≈’ï…ÂMï±ïç—Ω…±∞†úπôàú§πôΩ…Öç†°àÙ˘àπç±ÖÕÕ1•Õ–π…ïµΩŸî†ùÖç—•Ÿîú§§Ï(ÄÅâ—∏πç±ÖÕÕ1•Õ–πÖëê†ùÖç—•Ÿîú§ÏÅâ’•±ë]ïï≠±Â°Ö…–°µÂ=¡Ã†§±‹§Ï)Ù)ô’πç—•Ω∏Åô5Ωπ—†°â—∏±¥§ÅÏ(ÄÅâ—∏πç±ΩÕïÕ–†úπçÖ…êú§π≈’ï…ÂMï±ïç—Ω…±∞†úπôàú§πôΩ…Öç†°àÙ˘àπç±ÖÕÕ1•Õ–π…ïµΩŸî†ùÖç—•Ÿîú§§Ï(ÄÅâ—∏πç±ÖÕÕ1•Õ–πÖëê†ùÖç—•Ÿîú§ÏÅâ’•±ë5Ωπ—°±Â°Ö…–°µÂ=¡Ã†§±¥§Ï)Ù((º®ÉäVCäVCäVCäVCäVCäVCäVCäV@Å!%MQ=I%0ÉäVCäVCäVCäVCäVCäVCäVCâê */
 function renderHistorial() {
   let ops = myOps().slice().reverse();
   const act  = document.getElementById('fAct')?.value  ||'';
@@ -1320,7 +1605,7 @@ function renderPatrimonio(days) {
   if (filtered.length) { labels.push('Actual'); data.push(parseFloat(banca.toFixed(2))); }
 
   mkChart('cPatrimonio','line',{
-    labels, datasets:[{label:'Banca (USD)',data,
+    labels, datasets:[{label:'Cuenta (USD)',data,
       borderColor:'var(--primary)',backgroundColor:'#FF6B0015',fill:true,
       tension:.4,pointBackgroundColor:'var(--primary)',pointRadius:3}]
   },{scales:scaleOpts});
@@ -1349,7 +1634,7 @@ function renderMetas() {
   document.getElementById('metMetrics').innerHTML=`
     <div style="display:grid;gap:0">
       ${[
-        ['Banca actual', fmt(banca), 'cor'],
+        ['Cuenta actual', fmt(banca), 'cor'],
         ['P&L acumulado', fmtPN(pnl), pnl>=0?'cup':'cdn'],
         ['Metas activas', metas.length, 'cnu'],
         ['Metas alcanzadas', metas.filter(m=>banca>=m.valor).length, 'cup']
@@ -1434,8 +1719,8 @@ function renderAdmin() {
       <td style="color:var(--primary);font-weight:700">${fmt(u.banca||1000)}</td>
       <td style="color:var(--text3);font-size:11px">${u.registeredAt?new Date(u.registeredAt).toLocaleDateString('es-ES'):'‚Äî'}</td>
     </tr>`).join('');
-    document.getElementById('adminUsers').innerHTML=`<table>
-      <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PA√çS</th><th>BANCA</th><th>REGISTRO</th></tr></thead>
+    document.getElementById('adminUsers').innerHTML<`<table>
+      <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PA√çS</th><th>CUENTA</th><th>REGISTRO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
 
@@ -1456,7 +1741,7 @@ function renderAdmin() {
         <td>${sPill(o.status)}</td>
       </tr>`;
     }).join('');
-    document.getElementById('adminOps').innerHTML=`<table>
+    document.getElementById('adminOps').innerHTML<`<table>
       <thead><tr><th>FECHA</th><th>USUARIO</th><th>ACTIVO</th><th>DIR.</th><th>ENTRADA</th><th>P&amp;L</th><th>RESULTADO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
@@ -1464,7 +1749,7 @@ function renderAdmin() {
 
 function exportCSV() {
   const users=DB.getUsers();
-  const rows=[['Nombre','Email','WhatsApp','Pa√≠s','Banca','Registro']];
+  const rows=[['Nombre','Email','WhatsApp','Pa√≠s','Cuenta','Registro']];
   users.forEach(u=>rows.push([u.name,u.email,u.whatsapp||'',u.country||'',u.banca||1000,u.registeredAt||'']));
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
