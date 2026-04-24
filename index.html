@@ -274,7 +274,7 @@ tr:hover td{background:#ffffff04}
 .bnav-item.active{color:var(--primary)}
 .bnav-item span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
-@media(max-width:900px){.sidebar{width:200px}.main{margin-left:200px}.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.sidebar{width:200py}.main{margin-left:200px}.g4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:640px){
   .sidebar{
     position:fixed;left:0;top:0;bottom:0;
@@ -887,7 +887,7 @@ tr:hover td{background:#ffffff04}
 /* ════════ OBFUSCACIÓN BÁSICA (base64) ════════
    Protege datos de visualización casual en DevTools.
    Para seguridad real se requiere backend. */
-const _k = 'NorthAcademy_TNT_2024';
+const _k = 'NorthAcademy_TNT_2024";
 function _enc(data) {
   try {
     const s = JSON.stringify(data);
@@ -1222,6 +1222,19 @@ function saveOp() {
     ops.push(op);
     DB.saveOps(ops);
 
+    // Auto-update user banca with this operation's P&L
+    if (!CU.isAdmin) {
+      const users = DB.getUsers();
+      const idx = users.findIndex(x => String(x.id) === String(CU.id));
+      if (idx > -1) {
+        const pnl = res - entrada;
+        users[idx].banca = parseFloat(((parseFloat(users[idx].banca) || 1000) + pnl).toFixed(2));
+        DB.saveUsers(users);
+        CU.banca = users[idx].banca;
+        DB.setCU(CU);
+      }
+    }
+
     // Reset form
     document.getElementById('opEntrada').value='';
     document.getElementById('opRes').value='';
@@ -1476,8 +1489,21 @@ function delOp(btn) {
 
   try {
     const all  = DB.getOps();
+    const deletedOp = all.find(o => String(o.id) === String(id));
     const kept = all.filter(o => String(o.id) !== String(id));
     DB.saveOps(kept);
+    // Reverse the banca update for the deleted op
+    if (!CU.isAdmin && deletedOp && deletedOp.resultado != null) {
+      const users = DB.getUsers();
+      const idx = users.findIndex(x => String(x.id) === String(CU.id));
+      if (idx > -1) {
+        const pnl = deletedOp.resultado - deletedOp.entrada;
+        users[idx].banca = parseFloat(((parseFloat(users[idx].banca) || 1000) - pnl).toFixed(2));
+        DB.saveUsers(users);
+        CU.banca = users[idx].banca;
+        DB.setCU(CU);
+      }
+    }
     toast('Operación eliminada.','ok');
   } catch(e) {
     toast('Error al eliminar.','err');
@@ -1576,7 +1602,7 @@ function renderHistorial() {
 
   const el = document.getElementById('histTable');
   if (!ops.length) {
-    el.innerHTML=`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
+    el.innerHTML<`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
   }
   el.innerHTML = buildTable(ops);
 }
@@ -1767,7 +1793,7 @@ function renderAdmin() {
       <td style="color:var(--primary);font-weight:700">${fmt(u.banca||1000)}</td>
       <td style="color:var(--text3);font-size:11px">${u.registeredAt?new Date(u.registeredAt).toLocaleDateString('es-ES'):'—'}</td>
     </tr>`).join('');
-    document.getElementById('adminUsers').innerHTML<`<table>
+    document.getElementById('adminUsers').innerHTML=`<table>
       <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PAÍS</th><th>CUENTA</th><th>REGISTRO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
@@ -1789,7 +1815,7 @@ function renderAdmin() {
         <td>${sPill(o.status)}</td>
       </tr>`;
     }).join('');
-    document.getElementById('adminOps').innerHTML<`<table>
+    document.getElementById('adminOps').innerHTML=`<table>
       <thead><tr><th>FECHA</th><th>USUARIO</th><th>ACTIVO</th><th>DIR.</th><th>ENTRADA</th><th>P&amp;L</th><th>RESULTADO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
