@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>The North Academy â GestiÃ³n de Riesgo</title>
+<title>The North Academy — Gestión de Riesgo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
@@ -23,7 +23,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
 
-/* ââ LOGO TEXT ââ */
+/* ── LOGO TEXT ── */
 .logo-block{text-align:center;margin-bottom:32px}
 .logo-block .the{font-size:12px;font-weight:400;letter-spacing:5px;color:var(--text3);display:block;margin-bottom:2px}
 .logo-block .north{font-size:36px;font-weight:900;letter-spacing:3px;color:#ffffff;display:block;line-height:1}
@@ -33,7 +33,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .logo-block .sub2{color:var(--text3);font-size:9px;letter-spacing:4px;margin-top:10px;display:block;font-weight:600}
 .logo-divider{width:40px;height:1px;background:linear-gradient(90deg,transparent,#FF6B00,transparent);margin:10px auto 0}
 
-/* ââ AUTH ââ */
+/* ── AUTH ── */
 .auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
   background:radial-gradient(ellipse at top,#150500 0%,#080808 65%)}
 .auth-box{background:var(--bg2);border:1px solid var(--border-o);border-radius:16px;
@@ -55,7 +55,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .msg-err{color:var(--err);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
 .msg-ok{color:var(--ok);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
 
-/* ââ SIDEBAR ââ */
+/* ── SIDEBAR ── */
 #app{display:none}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--bg2);
   border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
@@ -79,7 +79,7 @@ nav{flex:1;padding:10px 0;overflow-y:auto}
   display:flex;align-items:center;justify-content:center;gap:7px}
 .btn-logout:hover{border-color:var(--err);color:var(--err)}
 
-/* ââ MAIN ââ */
+/* ── MAIN ── */
 .main{margin-left:230px;min-height:100vh}
 .topbar{padding:15px 28px;background:var(--bg2);border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
@@ -89,7 +89,7 @@ nav{flex:1;padding:10px 0;overflow-y:auto}
   border-radius:20px;font-weight:800;letter-spacing:1px}
 .content{padding:26px 28px}
 
-/* ââ CARDS ââ */
+/* ── CARDS ── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
 .card:last-child{margin-bottom:0}
 .card-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1.5px;margin-bottom:16px}
@@ -105,7 +105,7 @@ nav{flex:1;padding:10px 0;overflow-y:auto}
 .ssub{font-size:11px;color:var(--text2)}
 .cup{color:var(--ok)} .cdn{color:var(--err)} .cnu{color:var(--text)} .cor{color:var(--primary)}
 
-/* ââ FORMS ââ */
+/* ── FORMS ── */
 .fr{display:grid;gap:12px;margin-bottom:12px}
 .fr2{grid-template-columns:1fr 1fr} .fr3{grid-template-columns:1fr 1fr 1fr}
 .if{padding:10px 12px;background:var(--bg3);border:1px solid var(--border);
@@ -123,7 +123,7 @@ nav{flex:1;padding:10px 0;overflow-y:auto}
 .btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
 .btn-red{background:var(--err);color:#fff}
 
-/* ââ LEVEL CARDS ââ */
+/* ── LEVEL CARDS ── */
 .lvl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px}
 .lcard{border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;
   cursor:pointer;transition:all .2s;position:relative}
@@ -136,7 +136,7 @@ nav{flex:1;padding:10px 0;overflow-y:auto}
 .lval{font-size:12px;font-weight:700;color:var(--primary);margin-top:6px}
 .beg .lpct{color:var(--ok)} .mid .lpct{color:var(--warn)} .adv .lpct{color:var(--err)}
 
-/* ââ STOP BOXES ââ */
+/* ── STOP BOXES ── */
 .stops{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
 .sbox{border-radius:9px;padding:13px;border:1px solid;text-align:center}
 .sbox.sl{border-color:#FF174430;background:#FF174408}
@@ -147,13 +147,13 @@ nav{flex:1;padding:10px 0;overflow-y:auto}
 .sbox.sl .sv{color:var(--err)} .sbox.sg .sv{color:var(--ok)}
 .sbox .sp{font-size:10px;color:var(--text3);margin-top:2px}
 
-/* ââ SLIDER ââ */
+/* ── SLIDER ── */
 input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--bg4);
   border-radius:2px;outline:none;cursor:pointer;margin:6px 0}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
   border-radius:50%;background:var(--primary);cursor:pointer}
 
-/* ââ TABLE ââ */
+/* ── TABLE ── */
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{padding:9px 11px;background:var(--bg3);color:var(--text3);font-size:9px;
@@ -165,7 +165,7 @@ tr:hover td{background:#ffffff04}
 .pg{background:#00C85318;color:var(--ok)} .pr{background:#FF174418;color:var(--err)}
 .po{background:#FF6B0018;color:var(--primary)} .py{background:#FFD60018;color:var(--warn)}
 
-/* ââ CHARTS ââ */
+/* ── CHARTS ── */
 .ch-wrap{position:relative;height:230px}
 .ch-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .fb{padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;
@@ -173,7 +173,7 @@ tr:hover td{background:#ffffff04}
 .fb.active{background:var(--primary);border-color:var(--primary);color:#fff}
 .fb:hover:not(.active){border-color:var(--text2);color:var(--text2)}
 
-/* ââ GOALS ââ */
+/* ── GOALS ── */
 .gcard{background:var(--bg3);border-radius:9px;padding:15px;margin-bottom:10px;border:1px solid var(--border)}
 .gh{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
 .gname{font-weight:700;font-size:13px}
@@ -181,14 +181,14 @@ tr:hover td{background:#ffffff04}
 .pfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--primary-light));transition:width .5s}
 .gmeta{display:flex;justify-content:space-between;font-size:10px;color:var(--text3)}
 
-/* ââ ADMIN ââ */
+/* ── ADMIN ── */
 .admin-banner{background:linear-gradient(135deg,#120400,#200700);border:1px solid #FF6B0040;
   border-radius:12px;padding:16px 20px;margin-bottom:22px;display:flex;align-items:center;gap:12px}
 .admin-banner svg{flex-shrink:0}
 .admin-banner h3{color:var(--primary);font-size:14px;font-weight:800;letter-spacing:.5px}
 .admin-banner p{color:var(--text3);font-size:11px;margin-top:2px}
 
-/* ââ POPUP ââ */
+/* ── POPUP ── */
 .popup-ov{position:fixed;inset:0;background:#00000095;backdrop-filter:blur(6px);
   z-index:1000;display:flex;align-items:center;justify-content:center;animation:fi .2s}
 @keyframes fi{from{opacity:0}to{opacity:1}}
@@ -202,7 +202,7 @@ tr:hover td{background:#ffffff04}
   padding-top:13px;line-height:1.6;text-align:left}
 .popup-btns{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
 
-/* ââ TOAST ââ */
+/* ── TOAST ── */
 .toast{position:fixed;bottom:28px;right:28px;background:var(--bg3);border:1px solid var(--border);
   border-radius:10px;padding:13px 18px;font-size:13px;font-weight:600;z-index:9999;
   animation:fi .3s,fadeout .3s 2.7s forwards;box-shadow:0 8px 32px #00000060}
@@ -210,7 +210,7 @@ tr:hover td{background:#ffffff04}
 .toast.terr{border-left:3px solid var(--err);color:var(--err)}
 @keyframes fadeout{from{opacity:1}to{opacity:0;pointer-events:none}}
 
-/* ââ SECTION HEADER ââ */
+/* ── SECTION HEADER ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .stitle{font-size:14px;font-weight:700}
 .hidden{display:none!important}
@@ -218,11 +218,11 @@ tr:hover td{background:#ffffff04}
 .empty{text-align:center;padding:36px;color:var(--text3);font-size:13px}
 .empty svg{display:block;margin:0 auto 10px;opacity:.3}
 
-/* ââ PROGRESS BLOCK ââ */
+/* ── PROGRESS BLOCK ── */
 .divider{height:1px;background:var(--border);margin:18px 0}
 .npos{color:var(--ok)}.nneg{color:var(--err)}.nneu{color:var(--text)}
 
-/* ââ P&L DIÃRIO ââ */
+/* ── P&L DIÁRIO ── */
 .pnl-tabs{display:flex;gap:3px;background:var(--bg3);border-radius:8px;padding:3px;margin-bottom:18px}
 .pnl-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text3);
   border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;transition:all .2s;letter-spacing:.5px}
@@ -249,7 +249,7 @@ tr:hover td{background:#ffffff04}
 }
 
 
-/* ââ HAMBURGER ââ */
+/* ── HAMBURGER ── */
 .hamburger{display:none;flex-direction:column;gap:4px;background:transparent;border:none;
   cursor:pointer;padding:6px;border-radius:6px;transition:all .2s;margin-right:8px}
 .hamburger:hover{background:var(--bg3)}
@@ -259,11 +259,11 @@ tr:hover td{background:#ffffff04}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 
-/* ââ MOBILE OVERLAY ââ */
+/* ── MOBILE OVERLAY ── */
 .mob-overlay{display:none;position:fixed;inset:0;background:#00000080;z-index:99;backdrop-filter:blur(2px)}
 .mob-overlay.open{display:block}
 
-/* ââ BOTTOM NAV (mobile) ââ */
+/* ── BOTTOM NAV (mobile) ── */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
   border-top:1px solid var(--border);z-index:90;padding:0 0 env(safe-area-inset-bottom,0) 0}
 .bottom-nav-inner{display:flex;justify-content:space-around;align-items:center}
@@ -274,7 +274,7 @@ tr:hover td{background:#ffffff04}
 .bnav-item.active{color:var(--primary)}
 .bnav-item span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
-@media(max-width:900px){.sidebar{width:200py}.main{margin-left:200px}.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.sidebar{width:200px}.main{margin-left:200px}.g4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:640px){
   .sidebar{
     position:fixed;left:0;top:0;bottom:0;
@@ -307,7 +307,7 @@ tr:hover td{background:#ffffff04}
   /* Tabelas no mobile scrollam horizontalmente */
   .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table{min-width:480px}
-  /* BotÃµes maiores para touch */
+  /* Botões maiores para touch */
   .btn{min-height:38px}
   .btn-main{min-height:46px}
   .if{min-height:42px}
@@ -317,7 +317,7 @@ tr:hover td{background:#ffffff04}
   .sval{font-size:20px}
   /* Admin tab: scroll horizontal */
   .admin-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  /* Filtros de grÃ¡fico: scroll horizontal */
+  /* Filtros de gráfico: scroll horizontal */
   .ch-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
   /* Popup full width no mobile */
   .popup-box{max-width:100%;border-radius:12px}
@@ -326,19 +326,19 @@ tr:hover td{background:#ffffff04}
 </head>
 <body>
 
-<!-- âââââââââââ AUTH âââââââââââ -->
+<!-- ═══════════ AUTH ═══════════ -->
 <div id="authScreen" class="auth-screen">
   <div class="auth-box">
     <div class="logo-block">
       <span class="the">THE</span>
       <span class="north">NORTH</span>
-      <span class="gestion">GESTIÃN</span>
+      <span class="gestion">GESTIÓN</span>
       <div class="logo-divider"></div>
-      <span class="sub2">GESTIÃN DE RIESGO Â· TRADING</span>
+      <span class="sub2">GESTIÓN DE RIESGO · TRADING</span>
     </div>
 
     <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchTab('login')">Iniciar SesiÃ³n</button>
+      <button class="auth-tab active" onclick="switchTab('login')">Iniciar Sesión</button>
       <button class="auth-tab" onclick="switchTab('register')">Registrarse</button>
     </div>
 
@@ -347,8 +347,8 @@ tr:hover td{background:#ffffff04}
       <div class="fg"><label>USUARIO O EMAIL</label>
         <input type="text" id="lu" placeholder="tu@email.com" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <div class="fg"><label>CONTRASEÃA</label>
-        <input type="password" id="lp" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="fg"><label>CONTRASEÑA</label>
+        <input type="password" id="lp" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <button class="btn-main" onclick="doLogin()">ENTRAR</button>
       <div class="msg-err" id="loginErr"></div>
@@ -362,23 +362,23 @@ tr:hover td{background:#ffffff04}
       <div class="fg"><label>EMAIL</label>
         <input type="email" id="re" placeholder="tu@email.com">
       </div>
-      <div class="fg"><label>WHATSAPP (con cÃ³digo de paÃ­s)</label>
+      <div class="fg"><label>WHATSAPP (con código de país)</label>
         <input type="tel" id="rw" placeholder="+55 11 99999-9999">
       </div>
-      <div class="fg"><label>PAÃS</label>
+      <div class="fg"><label>PAÍS</label>
         <select id="rc">
-          <option value="">Selecciona tu paÃ­s</option>
+          <option value="">Selecciona tu país</option>
           <option>Argentina</option><option>Bolivia</option><option>Brasil</option>
           <option>Chile</option><option>Colombia</option><option>Costa Rica</option>
-          <option>Ecuador</option><option>El Salvador</option><option>EspaÃ±a</option>
-          <option>Guatemala</option><option>Honduras</option><option>MÃ©xico</option>
-          <option>Nicaragua</option><option>PanamÃ¡</option><option>Paraguay</option>
-          <option>PerÃº</option><option>RepÃºblica Dominicana</option><option>Uruguay</option>
+          <option>Ecuador</option><option>El Salvador</option><option>España</option>
+          <option>Guatemala</option><option>Honduras</option><option>México</option>
+          <option>Nicaragua</option><option>Panamá</option><option>Paraguay</option>
+          <option>Perú</option><option>República Dominicana</option><option>Uruguay</option>
           <option>Venezuela</option><option>Estados Unidos</option><option>Otro</option>
         </select>
       </div>
-      <div class="fg"><label>CONTRASEÃA</label>
-        <input type="password" id="rp" placeholder="MÃ­nimo 6 caracteres">
+      <div class="fg"><label>CONTRASEÑA</label>
+        <input type="password" id="rp" placeholder="Mínimo 6 caracteres">
       </div>
       <button class="btn-main" onclick="doRegister()">CREAR CUENTA</button>
       <div class="msg-err" id="regErr"></div>
@@ -387,7 +387,7 @@ tr:hover td{background:#ffffff04}
   </div>
 </div>
 
-<!-- âââââââââââ APP âââââââââââ -->
+<!-- ═══════════ APP ═══════════ -->
 <div id="app">
 
   <!-- SIDEBAR -->
@@ -397,11 +397,11 @@ tr:hover td{background:#ffffff04}
       <div style="font-size:15px;font-weight:900;color:#fff;letter-spacing:2px;line-height:1.1">NORTH</div>
       <div style="font-size:15px;font-weight:900;letter-spacing:2px;line-height:1.1;
         background:linear-gradient(135deg,#FF6B00,#FF9933);
-        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">GESTIÃN</div>
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">GESTIÓN</div>
     </div>
     <div class="sb-user">
       <strong id="sbName">Trader</strong>
-      Plataforma de gestiÃ³n de riesgo
+      Plataforma de gestión de riesgo
     </div>
     <nav>
       <div class="nav-sec">PRINCIPAL</div>
@@ -411,27 +411,27 @@ tr:hover td{background:#ffffff04}
       </div>
       <div class="nav-item" onclick="showPage('nueva')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nueva OperaciÃ³n
+        Nueva Operación
       </div>
       <div class="nav-item" onclick="showPage('historial')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
         Historial
       </div>
-      <div class="nav-sec">ANÃLISIS</div>
+      <div class="nav-sec">ANÁLISIS</div>
       <div class="nav-item" onclick="showPage('graficos')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-        GrÃ¡ficos
+        Gráficos
       </div>
       <div class="nav-item" onclick="showPage('patrimonio')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-        EvoluciÃ³n Patrimonial
+        Evolución Patrimonial
       </div>
       <div class="nav-sec">METAS</div>
       <div class="nav-item" onclick="showPage('metas')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
         Metas y Progreso
       </div>
-      <div class="nav-sec">CONFIGURACIÃN</div>
+      <div class="nav-sec">CONFIGURACIÓN</div>
       <div class="nav-item" onclick="showPage('banca')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Mi Cuenta
@@ -444,7 +444,7 @@ tr:hover td{background:#ffffff04}
     <div class="sb-foot">
       <button class="btn-logout" onclick="doLogout()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Cerrar SesiÃ³n
+        Cerrar Sesión
       </button>
     </div>
   </aside>
@@ -465,37 +465,37 @@ tr:hover td{background:#ffffff04}
     </div>
     <div class="content">
 
-      <!-- âââ DASHBOARD âââ -->
+      <!-- ─── DASHBOARD ─── -->
       <div id="page-dashboard" class="page active">
         <div class="g4" id="statCards"></div>
 
-        <!-- P&L DIARIO / PERÃODO -->
+        <!-- P&L DIARIO / PERÍODO -->
         <div class="card" style="margin-bottom:22px">
           <div class="sh" style="margin-bottom:14px">
             <div class="stitle" style="display:flex;align-items:center;gap:8px">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              GANANCIAS DEL DÃA / PERÃODO
+              GANANCIAS DEL DÍA / PERÍODO
             </div>
           </div>
 
-          <!-- PestaÃ±as DÃ­a / PerÃ­odo -->
+          <!-- Pestañas Día / Período -->
           <div class="pnl-tabs">
-            <button class="pnl-tab active" id="pnlTabDia" onclick="switchPnlTab('dia')">ð Por DÃ­a</button>
-            <button class="pnl-tab" id="pnlTabPer" onclick="switchPnlTab('periodo')">ð Por PerÃ­odo</button>
+            <button class="pnl-tab active" id="pnlTabDia" onclick="switchPnlTab('dia')">📅 Por Día</button>
+            <button class="pnl-tab" id="pnlTabPer" onclick="switchPnlTab('periodo')">📆 Por Período</button>
           </div>
 
-          <!-- Modo DÃ­a -->
+          <!-- Modo Día -->
           <div id="pnlModoDia">
             <div class="pnl-date-row">
               <input type="date" id="pnlDiaDate" onchange="renderPnlDia()">
               <button class="btn btn-ghost btn-sm" onclick="setPnlHoje()">Hoy</button>
-              <button class="btn btn-ghost btn-sm" onclick="pnlDiaStep(-1)">â</button>
-              <button class="btn btn-ghost btn-sm" onclick="pnlDiaStep(1)">â¶</button>
+              <button class="btn btn-ghost btn-sm" onclick="pnlDiaStep(-1)">◀</button>
+              <button class="btn btn-ghost btn-sm" onclick="pnlDiaStep(1)">▶</button>
             </div>
             <div class="pnl-grid" id="pnlDiaGrid"></div>
           </div>
 
-          <!-- Modo PerÃ­odo -->
+          <!-- Modo Período -->
           <div id="pnlModoPer" style="display:none">
             <div class="pnl-date-row">
               <input type="date" id="pnlPerDe" onchange="renderPnlPer()">
@@ -538,12 +538,12 @@ tr:hover td{background:#ffffff04}
         </div>
       </div>
 
-      <!-- âââ NUEVA âââ -->
+      <!-- ─── NUEVA ─── -->
       <div id="page-nueva" class="page">
         <div class="g2" style="align-items:start">
           <div>
             <div class="card">
-              <div class="card-title">REGISTRAR OPERACIÃN</div>
+              <div class="card-title">REGISTRAR OPERACIÓN</div>
 
               <div class="fr fr2">
                 <div class="fld"><span class="lbl">ACTIVO</span>
@@ -564,15 +564,15 @@ tr:hover td{background:#ffffff04}
                 <div class="fld"><span class="lbl">VALOR DE ENTRADA (USD)</span>
                   <input type="number" class="if" id="opEntrada" placeholder="0.00" step="0.01" oninput="calcOp()">
                 </div>
-                <div class="fld"><span class="lbl">DIRECCIÃN</span>
+                <div class="fld"><span class="lbl">DIRECCIÓN</span>
                   <select class="if" id="opDir" onchange="calcOp()">
-                    <option value="COMPRA">COMPRA â Long</option>
-                    <option value="VENTA">VENTA â Short</option>
+                    <option value="COMPRA">COMPRA — Long</option>
+                    <option value="VENTA">VENTA — Short</option>
                   </select>
                 </div>
               </div>
 
-              <span class="lbl">NIVEL DE RIESGO â clic para autocompletar entrada</span>
+              <span class="lbl">NIVEL DE RIESGO — clic para autocompletar entrada</span>
               <div class="lvl-grid">
                 <div class="lcard beg sel" onclick="selectLvl('beg',this)">
                   <div class="lpct">1%</div>
@@ -609,7 +609,7 @@ tr:hover td{background:#ffffff04}
                 <div class="sbox sl">
                   <div class="slbl">STOP LOSS</div>
                   <div class="sv" id="slVal">$0.00</div>
-                  <div class="sp" id="slPD">â 10%</div>
+                  <div class="sp" id="slPD">— 10%</div>
                 </div>
                 <div class="sbox sg">
                   <div class="slbl">STOP GAIN</div>
@@ -637,7 +637,7 @@ tr:hover td{background:#ffffff04}
               </div>
 
               <button class="btn btn-o" style="width:100%" onclick="saveOp()">
-                REGISTRAR OPERACIÃN
+                REGISTRAR OPERACIÓN
               </button>
             </div>
           </div>
@@ -651,16 +651,16 @@ tr:hover td{background:#ffffff04}
               <div class="card-title">REGLAS DE RIESGO</div>
               <div style="font-size:11px;color:var(--text2);line-height:1.9">
                 <div style="margin-bottom:6px"><span style="color:var(--ok);font-weight:700">Principiante 1%</span>
-                  â Nivel de entrada. Menor exposiciÃ³n al riesgo.</div>
+                  — Nivel de entrada. Menor exposición al riesgo.</div>
                 <div style="margin-bottom:6px"><span style="color:var(--warn);font-weight:700">Intermedio 2%</span>
-                  â Para traders con experiencia comprobada.</div>
+                  — Para traders con experiencia comprobada.</div>
                 <div style="margin-bottom:12px"><span style="color:var(--err);font-weight:700">Avanzado 3%</span>
-                  â Alta exposiciÃ³n. Requiere disciplina estricta.</div>
+                  — Alta exposición. Requiere disciplina estricta.</div>
                 <div class="divider" style="margin:10px 0"></div>
                 <div style="color:var(--text3)">
                   Un Stop Gain diario superior al <strong style="color:var(--warn)">5% de la cuenta</strong>
-                  es considerado de <strong style="color:var(--err)">alta exposiciÃ³n al riesgo</strong>
-                  y generarÃ¡ una advertencia.
+                  es considerado de <strong style="color:var(--err)">alta exposición al riesgo</strong>
+                  y generará una advertencia.
                 </div>
               </div>
             </div>
@@ -668,7 +668,7 @@ tr:hover td{background:#ffffff04}
         </div>
       </div>
 
-      <!-- âââ HISTORIAL âââ -->
+      <!-- ─── HISTORIAL ─── -->
       <div id="page-historial" class="page">
         <div class="card">
           <div class="sh">
@@ -684,10 +684,10 @@ tr:hover td{background:#ffffff04}
                 <option>GANADA</option><option>PERDIDA</option>
               </select>
               <select class="if" style="width:120px;padding:7px 10px;font-size:11px" id="fPer" onchange="renderHistorial()">
-                <option value="">Todo el perÃ­odo</option>
-                <option value="7">Ãltimos 7 dÃ­as</option>
-                <option value="30">Ãltimos 30 dÃ­as</option>
-                <option value="90">Ãltimos 90 dÃ­as</option>
+                <option value="">Todo el período</option>
+                <option value="7">Últimos 7 días</option>
+                <option value="30">Últimos 30 días</option>
+                <option value="90">Últimos 90 días</option>
               </select>
             </div>
           </div>
@@ -695,11 +695,11 @@ tr:hover td{background:#ffffff04}
         </div>
       </div>
 
-      <!-- âââ GRÃFICOS âââ -->
+      <!-- ─── GRÁFICOS ─── -->
       <div id="page-graficos" class="page">
         <div class="card">
           <div class="sh">
-            <div class="stitle">RENDIMIENTO POR PERÃODO</div>
+            <div class="stitle">RENDIMIENTO POR PERÍODO</div>
             <div class="ch-filters">
               <button class="fb active" onclick="setPG(this,7)">7D</button>
               <button class="fb" onclick="setPG(this,30)">1M</button>
@@ -713,7 +713,7 @@ tr:hover td{background:#ffffff04}
         </div>
         <div class="g2">
           <div class="card">
-            <div class="card-title">DISTRIBUCIÃN POR ACTIVO</div>
+            <div class="card-title">DISTRIBUCIÓN POR ACTIVO</div>
             <div class="ch-wrap"><canvas id="cActivos"></canvas></div>
           </div>
           <div class="card">
@@ -723,11 +723,11 @@ tr:hover td{background:#ffffff04}
         </div>
       </div>
 
-      <!-- âââ PATRIMONIO âââ -->
+      <!-- ─── PATRIMONIO ─── -->
       <div id="page-patrimonio" class="page">
         <div class="card">
           <div class="sh">
-            <div class="stitle">EVOLUCIÃN PATRIMONIAL</div>
+            <div class="stitle">EVOLUCIÓN PATRIMONIAL</div>
             <div class="ch-filters">
               <button class="fb active" onclick="setPP(this,30)">1M</button>
               <button class="fb" onclick="setPP(this,90)">3M</button>
@@ -743,12 +743,12 @@ tr:hover td{background:#ffffff04}
             <div class="sval cnu" id="pBI">$0</div><div class="ssub">Al comenzar</div></div>
           <div class="stat"><div class="slabel">CUENTA ACTUAL</div>
             <div class="sval" id="pBA">$0</div><div class="ssub">Saldo actual</div></div>
-          <div class="stat"><div class="slabel">VARIACIÃN TOTAL</div>
+          <div class="stat"><div class="slabel">VARIACIÓN TOTAL</div>
             <div class="sval" id="pVAR">$0</div><div class="ssub" id="pPCT">0%</div></div>
         </div>
       </div>
 
-      <!-- âââ METAS âââ -->
+      <!-- ─── METAS ─── -->
       <div id="page-metas" class="page">
         <div class="g2" style="align-items:start">
           <div>
@@ -761,7 +761,7 @@ tr:hover td{background:#ffffff04}
                 <div class="fld"><span class="lbl">META (USD)</span>
                   <input type="number" class="if" id="mVal" placeholder="0.00">
                 </div>
-                <div class="fld"><span class="lbl">FECHA LÃMITE</span>
+                <div class="fld"><span class="lbl">FECHA LÍMITE</span>
                   <input type="date" class="if" id="mFecha">
                 </div>
               </div>
@@ -771,7 +771,7 @@ tr:hover td{background:#ffffff04}
             </div>
           </div>
           <div class="card">
-            <div class="card-title">MÃTRICAS CLAVE</div>
+            <div class="card-title">MÉTRICAS CLAVE</div>
             <div id="metMetrics"></div>
           </div>
         </div>
@@ -780,7 +780,7 @@ tr:hover td{background:#ffffff04}
         </div>
       </div>
 
-      <!-- âââ CUENTA âââ -->
+      <!-- ─── CUENTA ─── -->
       <div id="page-banca" class="page">
         <div class="card" style="max-width:460px">
           <div class="card-title">CONFIGURAR MI CUENTA</div>
@@ -789,26 +789,26 @@ tr:hover td{background:#ffffff04}
           </div>
           <div class="fld" style="margin-bottom:14px"><span class="lbl">NIVEL POR DEFECTO</span>
             <select class="if" id="nivelDef">
-              <option value="beg">Principiante â 1%</option>
-              <option value="mid">Intermedio â 2%</option>
-              <option value="adv">Avanzado â 3%</option>
+              <option value="beg">Principiante — 1%</option>
+              <option value="mid">Intermedio — 2%</option>
+              <option value="adv">Avanzado — 3%</option>
             </select>
           </div>
-          <button class="btn btn-o" onclick="saveBanca()">GUARDAR CONFIGURACIÃN</button>
+          <button class="btn btn-o" onclick="saveBanca()">GUARDAR CONFIGURACIÓN</button>
           <div id="bancaMsg" style="margin-top:10px;font-size:12px;color:var(--ok)"></div>
 
         </div>
       </div>
 
-      <!-- âââ ADMIN âââ -->
+      <!-- ─── ADMIN ─── -->
       <div id="page-admin" class="page">
         <div class="admin-banner">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="1.5">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
           <div>
-            <h3>PANEL DE ADMINISTRACIÃN</h3>
-            <p>Acceso exclusivo â Base de datos completa de la plataforma</p>
+            <h3>PANEL DE ADMINISTRACIÓN</h3>
+            <p>Acceso exclusivo — Base de datos completa de la plataforma</p>
           </div>
         </div>
         <div class="g3" id="adminStats" style="margin-bottom:22px"></div>
@@ -847,7 +847,7 @@ tr:hover td{background:#ffffff04}
       </button>
       <button class="bnav-item" data-page="graficos" onclick="showPage('graficos')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-        <span>GrÃ¡ficos</span>
+        <span>Gráficos</span>
       </button>
       <button class="bnav-item" data-page="metas" onclick="showPage('metas')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
@@ -858,7 +858,7 @@ tr:hover td{background:#ffffff04}
 
 </div><!-- /app -->
 
-<!-- âââââââââââ POPUP RIESGO âââââââââââ -->
+<!-- ═══════════ POPUP RIESGO ═══════════ -->
 <div id="riskPopup" class="popup-ov hidden">
   <div class="popup-box">
     <div class="popup-icon" style="color:var(--err)">
@@ -867,25 +867,25 @@ tr:hover td{background:#ffffff04}
         <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
       </svg>
     </div>
-    <h2>ALTA EXPOSICIÃN AL RIESGO</h2>
+    <h2>ALTA EXPOSICIÓN AL RIESGO</h2>
     <p>Tu Stop Gain supera el <strong>5% diario sobre la cuenta</strong>.<br>
-    Esto representa una exposiciÃ³n considerada <strong>elevada</strong>.</p>
+    Esto representa una exposición considerada <strong>elevada</strong>.</p>
     <div class="popup-btns">
-      <button class="btn btn-red" onclick="confirmRisk()">Entiendo â continuar</button>
+      <button class="btn btn-red" onclick="confirmRisk()">Entiendo — continuar</button>
       <button class="btn btn-ghost" onclick="cancelRisk()">Ajustar valores</button>
     </div>
     <div class="popup-disc">
-      <strong style="color:var(--warn)">Aviso importante:</strong> Continuar es una decisiÃ³n exclusiva del alumno.
-      The North Academy <strong>no recomienda</strong> operar con exposiciÃ³n superior al 5% diario.
-      El trading conlleva riesgo de pÃ©rdida de capital. Esta herramienta tiene fines educativos.
+      <strong style="color:var(--warn)">Aviso importante:</strong> Continuar es una decisión exclusiva del alumno.
+      The North Academy <strong>no recomienda</strong> operar con exposición superior al 5% diario.
+      El trading conlleva riesgo de pérdida de capital. Esta herramienta tiene fines educativos.
     </div>
   </div>
 </div>
 
-<!-- âââââââââââ JAVASCRIPT âââââââââââ -->
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
 <script>
-/* ââââââââ OBFUSCACIÃN BÃSICA (base64) ââââââââ
-   Protege datos de visualizaciÃ³n casual en DevTools.
+/* ════════ OBFUSCACIÓN BÁSICA (base64) ════════
+   Protege datos de visualización casual en DevTools.
    Para seguridad real se requiere backend. */
 const _k = 'NorthAcademy_TNT_2024';
 function _enc(data) {
@@ -909,7 +909,7 @@ function _dec(raw) {
   }
 }
 
-/* ââââââââ DB LAYER ââââââââ */
+/* ════════ DB LAYER ════════ */
 const DB = {
   getUsers()   { return _dec(localStorage.getItem('tna_u'))  || []; },
   saveUsers(u) { localStorage.setItem('tna_u', _enc(u)); },
@@ -922,13 +922,13 @@ const DB = {
   clearCU()    { sessionStorage.removeItem('tna_cu'); },
 };
 
-/* ââââââââ GLOBALS ââââââââ */
+/* ════════ GLOBALS ════════ */
 let CU = null;          // current user
 let selLvl = 'beg';    // selected level
 let riskCb  = null;     // risk popup callback
 let charts  = {};       // Chart.js instances
 
-/* ââââââââ INIT ââââââââ */
+/* ════════ INIT ════════ */
 window.onload = () => {
   const d = new Date();
   document.getElementById('opFecha').value = d.toISOString().split('T')[0];
@@ -938,7 +938,7 @@ window.onload = () => {
   if (saved) { CU = saved; launchApp(); }
 };
 
-/* ââââââââ AUTH ââââââââ */
+/* ════════ AUTH ════════ */
 function switchTab(t) {
   document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active',(t==='login')===!i));
   document.getElementById('loginForm').classList.toggle('hidden', t!=='login');
@@ -955,7 +955,7 @@ function doLogin() {
 
   if (u === 'admin.albano') {
     if (p !== 'north.123.admintnt') {
-      err.textContent = 'ContraseÃ±a de administrador incorrecta.'; return;
+      err.textContent = 'Contraseña de administrador incorrecta.'; return;
     }
     CU = { id: '__admin__', name:'Administrador', email:'admin.albano', isAdmin:true };
     DB.setCU(CU); launchApp(); return;
@@ -965,7 +965,7 @@ function doLogin() {
   const found = users.find(x =>
     x.email.toLowerCase() === u && x.pass === p
   );
-  if (!found) { err.textContent = 'Usuario o contraseÃ±a incorrectos.'; return; }
+  if (!found) { err.textContent = 'Usuario o contraseña incorrectos.'; return; }
   CU = { ...found };
   DB.setCU(CU); launchApp();
 }
@@ -981,10 +981,10 @@ function doRegister() {
   err.textContent=''; ok.textContent='';
 
   if (!name||!email||!wa||!ctry||!pass) { err.textContent='Completa todos los campos.'; return; }
-  if (pass.length<6) { err.textContent='La contraseÃ±a debe tener al menos 6 caracteres.'; return; }
+  if (pass.length<6) { err.textContent='La contraseña debe tener al menos 6 caracteres.'; return; }
 
   const users = DB.getUsers();
-  if (users.find(x=>x.email===email)) { err.textContent='Este email ya estÃ¡ registrado.'; return; }
+  if (users.find(x=>x.email===email)) { err.textContent='Este email ya está registrado.'; return; }
 
   const nu = {
     id: String(Date.now()),   // STRING para consistencia en comparaciones
@@ -994,7 +994,7 @@ function doRegister() {
   };
   users.push(nu);
   DB.saveUsers(users);
-  ok.textContent='Â¡Cuenta creada! Ya puedes iniciar sesiÃ³n.';
+  ok.textContent='¡Cuenta creada! Ya puedes iniciar sesión.';
   setTimeout(()=>switchTab('login'), 1800);
 }
 
@@ -1010,7 +1010,7 @@ function doLogout() {
   if(first) first.classList.add('active');
 }
 
-/* ââââââââ LAUNCH ââââââââ */
+/* ════════ LAUNCH ════════ */
 function launchApp() {
   document.getElementById('authScreen').style.display='none';
   document.getElementById('app').style.display='block';
@@ -1029,10 +1029,10 @@ function launchApp() {
   }
 }
 
-/* ââââââââ PAGES ââââââââ */
+/* ════════ PAGES ════════ */
 const pageTitles = {
-  dashboard:'Dashboard', nueva:'Nueva OperaciÃ³n', historial:'Historial',
-  graficos:'GrÃ¡ficos', patrimonio:'EvoluciÃ³n Patrimonial', metas:'Metas y Progreso',
+  dashboard:'Dashboard', nueva:'Nueva Operación', historial:'Historial',
+  graficos:'Gráficos', patrimonio:'Evolución Patrimonial', metas:'Metas y Progreso',
   banca:'Mi Cuenta', admin:'Panel Admin'
 };
 const navMap = ['dashboard','nueva','historial','graficos','patrimonio','metas','banca','admin'];
@@ -1088,22 +1088,29 @@ function showPage(id) {
   }, 50);
 }
 
-/* ââââââââ BANCA ââââââââ */
+/* ════════ BANCA ════════ */
 function getUserBanca() {
   if (!CU || CU.isAdmin) return 1000;
   const u = DB.getUsers().find(x=>x.id===CU.id);
   return u ? parseFloat(u.banca)||1000 : 1000;
 }
+// Conta atual = banca inicial configurada + PnL de todas as operações fechadas
+function getComputedBanca() {
+  const initial = getUserBanca();
+  const ops = myOps().filter(o => o.resultado != null);
+  const pnl = ops.reduce((a, o) => a + (o.resultado - o.entrada), 0);
+  return parseFloat((initial + pnl).toFixed(2));
+}
 
 function saveBanca() {
   const v = parseFloat(document.getElementById('bancaIn').value);
   const n = document.getElementById('nivelDef').value;
-  if (!v||v<=0) { toast('Ingresa un valor de cuenta vÃ¡lido.','err'); return; }
+  if (!v||v<=0) { toast('Ingresa un valor de cuenta válido.','err'); return; }
   const users = DB.getUsers();
   const idx = users.findIndex(x=>x.id===CU.id);
   if (idx>-1) { users[idx].banca=v; users[idx].nivel=n; DB.saveUsers(users); }
   CU.banca=v; CU.nivel=n; DB.setCU(CU);
-  document.getElementById('bancaMsg').textContent='ConfiguraciÃ³n guardada con Ã©xito.';
+  document.getElementById('bancaMsg').textContent='Configuración guardada con éxito.';
   calcOp();
 }
 
@@ -1141,7 +1148,7 @@ function renderBancaRes() {
     </div>`;
 }
 
-/* ââââââââ OPERACIÃN CALC ââââââââ */
+/* ════════ OPERACIÓN CALC ════════ */
 const lvlPct = { beg:0.01, mid:0.02, adv:0.03 };
 
 function selectLvl(lvl, el) {
@@ -1156,7 +1163,7 @@ function selectLvl(lvl, el) {
 }
 
 function calcOp() {
-  const banca = getUserBanca();
+  const banca = getComputedBanca();
   const pcts = { beg:0.01, mid:0.02, adv:0.03 };
   document.getElementById('lv1').textContent = fmt(banca*0.01);
   document.getElementById('lv2').textContent = fmt(banca*0.02);
@@ -1177,11 +1184,11 @@ function calcOp() {
     document.getElementById('slVal').textContent = '$0.00';
     document.getElementById('sgVal').textContent = '$0.00';
   }
-  document.getElementById('slPD').textContent = `â ${slPct}%`;
+  document.getElementById('slPD').textContent = `— ${slPct}%`;
   document.getElementById('sgPD').textContent = `+ ${sgPct}%`;
 }
 
-/* ââââââââ SAVE OPERATION ââââââââ */
+/* ════════ SAVE OPERATION ════════ */
 function saveOp() {
   const entrada = parseFloat(document.getElementById('opEntrada').value);
   const res     = parseFloat(document.getElementById('opRes').value);
@@ -1192,7 +1199,7 @@ function saveOp() {
   const dir     = document.getElementById('opDir').value;
 
   if (!entrada||entrada<=0) { toast('Ingresa el valor de entrada.','err'); return; }
-  if (isNaN(res)||res<=0)   { toast('Ingresa el resultado real de la operaciÃ³n.','err'); return; }
+  if (isNaN(res)||res<=0)   { toast('Ingresa el resultado real de la operación.','err'); return; }
 
   const ganancia = entrada*sgPct/100;
   const pctBanca = (ganancia/banca)*100;
@@ -1222,19 +1229,6 @@ function saveOp() {
     ops.push(op);
     DB.saveOps(ops);
 
-    // Auto-update user banca with this operation's P&L
-    if (!CU.isAdmin) {
-      const users = DB.getUsers();
-      const idx = users.findIndex(x => String(x.id) === String(CU.id));
-      if (idx > -1) {
-        const pnl = res - entrada;
-        users[idx].banca = parseFloat(((parseFloat(users[idx].banca) || 1000) + pnl).toFixed(2));
-        DB.saveUsers(users);
-        CU.banca = users[idx].banca;
-        DB.setCU(CU);
-      }
-    }
-
     // Reset form
     document.getElementById('opEntrada').value='';
     document.getElementById('opRes').value='';
@@ -1245,7 +1239,7 @@ function saveOp() {
     document.querySelector('.lcard.beg').classList.add('sel');
     calcOp();
 
-    toast('OperaciÃ³n registrada con Ã©xito.','ok');
+    toast('Operación registrada con éxito.','ok');
     // Go to historial to show the new entry
     setTimeout(()=>showPage('historial'), 400);
   };
@@ -1267,7 +1261,7 @@ function cancelRisk() {
   riskCb=null;
 }
 
-/* ââââââââ MY OPS ââââââââ */
+/* ════════ MY OPS ════════ */
 function myOps() {
   const all = DB.getOps();
   if (!CU||CU.isAdmin) return all;
@@ -1277,10 +1271,10 @@ function myMetas() {
   return DB.getMetas().filter(m => String(m.userId) === String(CU.id));
 }
 
-/* ââââââââ DASHBOARD ââââââââ */
+/* ════════ DASHBOARD ════════ */
 function renderDash() {
   const ops  = myOps();
-  const banca= getUserBanca();
+  const banca= getComputedBanca();
 
   // All closed ops for P&L
   const cl   = ops.filter(o=>o.resultado!=null && o.resultado!==undefined);
@@ -1296,13 +1290,13 @@ function renderDash() {
   document.getElementById('statCards').innerHTML = `
     <div class="stat">
       <div class="slabel">CUENTA ACTUAL</div>
-      <div class="sval cnu">${fmt(banca)}</div>
-      <div class="ssub">Saldo configurado</div>
+      <div class="sval ${banca>=getUserBanca()?'cup':'cdn'}">${fmt(banca)}</div>
+      <div class="ssub">Inicial: ${fmt(getUserBanca())}</div>
     </div>
     <div class="stat">
       <div class="slabel">P&amp;L ACUMULADO</div>
       <div class="sval ${pnl>=0?'cup':'cdn'}">${fmtPN(pnl)}</div>
-      <div class="ssub">${cl.length} operaciÃ³n${cl.length!==1?'es':''} cerrada${cl.length!==1?'s':''}</div>
+      <div class="ssub">${cl.length} operación${cl.length!==1?'es':''} cerrada${cl.length!==1?'s':''}</div>
     </div>
     <div class="stat">
       <div class="slabel">WIN RATE</div>
@@ -1312,18 +1306,18 @@ function renderDash() {
     <div class="stat">
       <div class="slabel">P&amp;L HOY</div>
       <div class="sval ${todayPnl>=0?'cup':'cdn'}">${fmtPN(todayPnl)}</div>
-      <div class="ssub">${todayOps.length} operaciÃ³n${todayOps.length!==1?'es':''} hoy</div>
+      <div class="ssub">${todayOps.length} operación${todayOps.length!==1?'es':''} hoy</div>
     </div>`;
 
   renderRecentTrades(ops.slice(-6).reverse());
   buildWeeklyChart(ops, 1);
   buildMonthlyChart(ops, 1);
-  // Inicializa P&L diÃ¡rio
+  // Inicializa P&L diário
   initPnlDates();
   renderPnlDia();
 }
 
-/* ââââââââ P&L DIÃRIO / PERÃODO ââââââââ */
+/* ════════ P&L DIÁRIO / PERÍODO ════════ */
 function isoHoje() {
   return new Date().toISOString().split('T')[0];
 }
@@ -1335,7 +1329,7 @@ function initPnlDates() {
   const deEl  = document.getElementById('pnlPerDe');
   const ateEl = document.getElementById('pnlPerAte');
   if (deEl && !deEl.value) {
-    // default: Ãºltimos 7 dias
+    // default: últimos 7 dias
     const d = new Date(); d.setDate(d.getDate()-6);
     deEl.value = d.toISOString().split('T')[0];
   }
@@ -1402,15 +1396,15 @@ function buildPnlGrid(stats, label) {
     <div class="pnl-stat" style="--accent-color:var(--ok)">
       <div class="psl">GANADAS</div>
       <div class="psv" style="color:var(--ok)">${ganhas}</div>
-      <div class="pss">${wr !== null ? wr+'% win rate' : 'â'}</div>
+      <div class="pss">${wr !== null ? wr+'% win rate' : '—'}</div>
     </div>
     <div class="pnl-stat" style="--accent-color:var(--err)">
       <div class="psl">PERDIDAS</div>
       <div class="psv" style="color:var(--err)">${perdidas}</div>
-      <div class="pss">${entradas > 0 ? ((perdidas/entradas)*100).toFixed(1)+'% de ops' : 'â'}</div>
+      <div class="pss">${entradas > 0 ? ((perdidas/entradas)*100).toFixed(1)+'% de ops' : '—'}</div>
     </div>
     <div class="pnl-stat" style="--accent-color:${pnlClr}">
-      <div class="psl">GANANCIA / PÃRDIDA</div>
+      <div class="psl">GANANCIA / PÉRDIDA</div>
       <div class="psv ${pnlCls}">${fmtPN(pnl)}</div>
       <div class="pss">${label}</div>
     </div>`;
@@ -1434,7 +1428,7 @@ function renderPnlPer() {
   const ops = myOps().filter(o => o.fecha >= de && o.fecha <= ate);
   const d1  = new Date(de+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'});
   const d2  = new Date(ate+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'});
-  document.getElementById('pnlPerGrid').innerHTML = buildPnlGrid(calcPnlStats(ops), `${d1} â ${d2}`);
+  document.getElementById('pnlPerGrid').innerHTML = buildPnlGrid(calcPnlStats(ops), `${d1} → ${d2}`);
 }
 
 function renderRecentTrades(ops) {
@@ -1442,7 +1436,7 @@ function renderRecentTrades(ops) {
   if (!ops.length) {
     el.innerHTML<`<div class="empty">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Sin operaciones registradas aÃºn.</div>`;
+      Sin operaciones registradas aún.</div>`;
     return;
   }
   el.innerHTML = buildTable(ops);
@@ -1456,9 +1450,9 @@ function buildTable(ops) {
       <td><span class="pill po">${o.activo}</span></td>
       <td style="color:${o.dir==='COMPRA'?'var(--ok)':'var(--err)'};font-weight:700;font-size:11px">${o.dir}</td>
       <td style="color:var(--text);font-weight:700">${fmt(o.entrada)}</td>
-      <td>${pnl!=null?`<span class="${pnl>=0?'npos':'nneg'}" style="font-weight:700">${fmtPN(pnl)}</span>`:'â'}</td>
+      <td>${pnl!=null?`<span class="${pnl>=0?'npos':'nneg'}" style="font-weight:700">${fmtPN(pnl)}</span>`:'—'}</td>
       <td>${sPill(o.status)}</td>
-      <td style="font-size:11px;color:var(--text3);max-width:120px;overflow:hidden;text-overflow:ellipsis">${o.obs||'â'}</td>
+      <td style="font-size:11px;color:var(--text3);max-width:120px;overflow:hidden;text-overflow:ellipsis">${o.obs||'—'}</td>
       <td><button class="btn btn-red btn-sm" data-opid="${o.id}" onclick="delOp(this)">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       </button></td>
@@ -1478,7 +1472,7 @@ function delOp(btn) {
   const id = btn.getAttribute('data-opid');
   if (!id) { toast('Error: ID no encontrado.','err'); return; }
 
-  // Mini confirmaciÃ³n visual sin confirm() (bloqueado en algunos navegadores)
+  // Mini confirmación visual sin confirm() (bloqueado en algunos navegadores)
   if (btn.dataset.confirm !== '1') {
     btn.dataset.confirm = '1';
     btn.style.background = '#cc0000';
@@ -1489,29 +1483,16 @@ function delOp(btn) {
 
   try {
     const all  = DB.getOps();
-    const deletedOp = all.find(o => String(o.id) === String(id));
     const kept = all.filter(o => String(o.id) !== String(id));
     DB.saveOps(kept);
-    // Reverse the banca update for the deleted op
-    if (!CU.isAdmin && deletedOp && deletedOp.resultado != null) {
-      const users = DB.getUsers();
-      const idx = users.findIndex(x => String(x.id) === String(CU.id));
-      if (idx > -1) {
-        const pnl = deletedOp.resultado - deletedOp.entrada;
-        users[idx].banca = parseFloat(((parseFloat(users[idx].banca) || 1000) - pnl).toFixed(2));
-        DB.saveUsers(users);
-        CU.banca = users[idx].banca;
-        DB.setCU(CU);
-      }
-    }
-    toast('OperaciÃ³n eliminada.','ok');
+    toast('Operación eliminada.','ok');
   } catch(e) {
     toast('Error al eliminar.','err');
     console.error('delOp error:', e);
     return;
   }
 
-  // Actualizar solo la pÃ¡gina activa
+  // Actualizar solo la página activa
   try { renderHistorial(); } catch(e) {}
   try {
     if (document.getElementById('page-dashboard').classList.contains('active')) renderDash();
@@ -1523,7 +1504,7 @@ function sPill(s) {
   return `<span class="pill ${m[s]||'po'}">${s}</span>`;
 }
 
-/* ââââââââ CHARTS ââââââââ */
+/* ════════ CHARTS ════════ */
 function mkChart(id, type, data, opts={}) {
   try {
     const ctx = document.getElementById(id);
@@ -1590,7 +1571,7 @@ function fMonth(btn,m) {
   btn.classList.add('active'); buildMonthlyChart(myOps(),m);
 }
 
-/* ââââââââ HISTORIAL ââââââââ */
+/* ════════ HISTORIAL ════════ */
 function renderHistorial() {
   let ops = myOps().slice().reverse();
   const act  = document.getElementById('fAct')?.value  ||'';
@@ -1602,12 +1583,12 @@ function renderHistorial() {
 
   const el = document.getElementById('histTable');
   if (!ops.length) {
-    el.innerHTML<`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
+    el.innerHTML=`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
   }
   el.innerHTML = buildTable(ops);
 }
 
-/* ââââââââ GRÃFICOS ââââââââ */
+/* ════════ GRÁFICOS ════════ */
 function renderGraficos(days) {
   const ops = myOps().filter(o=>o.resultado!=null);
   const now = new Date();
@@ -1653,7 +1634,7 @@ function setPG(btn,d){
   btn.classList.add('active'); renderGraficos(d);
 }
 
-/* ââââââââ PATRIMONIO ââââââââ */
+/* ════════ PATRIMONIO ════════ */
 function renderPatrimonio(days) {
   const ops  = myOps().filter(o=>o.resultado!=null).sort((a,b)=>a.fecha.localeCompare(b.fecha));
   const banca= getUserBanca();
@@ -1686,7 +1667,7 @@ function renderPatrimonio(days) {
 
   const variac = banca-initial;
   const pct    = initial>0?(variac/initial*100).toFixed(2):0;
-  document.getElementById('pBI').textContent = fmt(initial);
+  document.getElementById('pBI'+).textContent = fmt(initial);
   document.getElementById('pBA').textContent = fmt(banca);
   document.getElementById('pBA').className   = 'sval '+(variac>=0?'cup':'cdn');
   document.getElementById('pVAR').textContent = fmtPN(variac);
@@ -1698,7 +1679,7 @@ function setPP(btn,d){
   btn.classList.add('active'); renderPatrimonio(d);
 }
 
-/* ââââââââ METAS ââââââââ */
+/* ════════ METAS ════════ */
 function renderMetas() {
   const metas=myMetas();
   const banca=getUserBanca();
@@ -1730,19 +1711,19 @@ function renderMetas() {
     const dl=m.fecha?Math.ceil((new Date(m.fecha)-new Date())/86400000):null;
     return `<div class="gcard">
       <div class="gh">
-        <div class="gname" style="color:${done?'var(--ok)':'var(--text)'}">${done?'â ':''}${m.nombre}</div>
+        <div class="gname" style="color:${done?'var(--ok)':'var(--text)'}">${done?'✓ ':''}${m.nombre}</div>
         <button class="btn btn-red btn-sm" onclick="delMeta(${i})">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         </button>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px;color:var(--text3)">
         <span>${fmt(banca)} / <strong>${fmt(m.valor)}</strong></span>
         <span style="color:var(--primary);font-weight:800">${pct}%</span>
       </div>
       <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
       <div class="gmeta">
         <span>${done?'META ALCANZADA':'Faltan '+fmt(m.valor-banca)}</span>
-        <span>${dl!=null?(dl<0?'Vencida':dl+' dÃ­as restantes'):'Sin fecha lÃ­mite'}</span>
+        <span>${dl!=null?(dl<0?'Vencida':dl+' días restantes'):'Sin fecha límite'}</span>
       </div>
     </div>`;
   }).join('');
@@ -1770,7 +1751,7 @@ function delMeta(idx) {
   renderMetas();
 }
 
-/* ââââââââ ADMIN ââââââââ */
+/* ════════ ADMIN ════════ */
 function renderAdmin() {
   const users=DB.getUsers();
   const ops=DB.getOps();
@@ -1779,7 +1760,7 @@ function renderAdmin() {
       <div class="sval cor">${users.length}</div></div>
     <div class="stat"><div class="slabel">TOTAL OPERACIONES</div>
       <div class="sval cnu">${ops.length}</div></div>
-    <div class="stat"><div class="slabel">PAÃSES</div>
+    <div class="stat"><div class="slabel">PAÍSES</div>
       <div class="sval cnu">${[...new Set(users.map(u=>u.country).filter(Boolean))].length}</div></div>`;
 
   // Users table
@@ -1788,13 +1769,13 @@ function renderAdmin() {
   } else {
     const rows=users.map(u=>`<tr>
       <td style="color:var(--text)">${u.name}</td>
-      <td>${u.email}</td><td>${u.whatsapp||'â'}</td>
-      <td><span class="pill po">${u.country||'â'}</span></td>
+      <td>${u.email}</td><td>${u.whatsapp||'—'}</td>
+      <td><span class="pill po">${u.country||'—'}</span></td>
       <td style="color:var(--primary);font-weight:700">${fmt(u.banca||1000)}</td>
-      <td style="color:var(--text3);font-size:11px">${u.registeredAt?new Date(u.registeredAt).toLocaleDateString('es-ES'):'â'}</td>
+      <td style="color:var(--text3);font-size:11px">${u.registeredAt?new Date(u.registeredAt).toLocaleDateString('es-ES'):'—'}</td>
     </tr>`).join('');
     document.getElementById('adminUsers').innerHTML=`<table>
-      <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PAÃS</th><th>CUENTA</th><th>REGISTRO</th></tr></thead>
+      <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PAÍS</th><th>CUENTA</th><th>REGISTRO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
 
@@ -1807,11 +1788,11 @@ function renderAdmin() {
       const pnl=o.resultado!=null?o.resultado-o.entrada:null;
       return `<tr>
         <td style="color:var(--text3);font-size:11px">${o.fecha}</td>
-        <td style="color:var(--text);font-size:12px">${u?u.name:'â'}</td>
+        <td style="color:var(--text);font-size:12px">${u?u.name:'—'}</td>
         <td><span class="pill po">${o.activo}</span></td>
-        <td style="color:var(--text3)">${o.dir||'â'}</td>
+        <td style="color:var(--text3)">${o.dir||'—'}</td>
         <td style="color:var(--text);font-weight:700">${fmt(o.entrada)}</td>
-        <td>${pnl!=null?`<span style="font-weight:700" class="${pnl>=0?'npos':'nneg'}">${fmtPN(pnl)}</span>`:'â'}</td>
+        <td>${pnl!=null?`<span style="font-weight:700" class="${pnl>=0?'npos':'nneg'}">${fmtPN(pnl)}</span>`:'—'}</td>
         <td>${sPill(o.status)}</td>
       </tr>`;
     }).join('');
@@ -1823,7 +1804,7 @@ function renderAdmin() {
 
 function exportCSV() {
   const users=DB.getUsers();
-  const rows=[['Nombre','Email','WhatsApp','PaÃ­s','Cuenta','Registro']];
+  const rows=[['Nombre','Email','WhatsApp','País','Cuenta','Registro']];
   users.forEach(u=>rows.push([u.name,u.email,u.whatsapp||'',u.country||'',u.banca||1000,u.registeredAt||'']));
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
@@ -1832,7 +1813,7 @@ function exportCSV() {
   a.click();
 }
 
-/* ââââââââ HELPERS ââââââââ */
+/* ════════ HELPERS ════════ */
 function fmt(v){
   return '$'+parseFloat(v||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
