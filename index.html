@@ -318,7 +318,7 @@ tr:hover td{background:#ffffff04}
   /* Admin tab: scroll horizontal */
   .admin-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   /* Filtros de gráfico: scroll horizontal */
-  .ch-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  .ch-filters{flex-wrap:nowraw;overflow-x:auto;padding-bottom:4px}
   /* Popup full width no mobile */
   .popup-box{max-width:100%;border-radius:12px}
 }
@@ -782,22 +782,69 @@ tr:hover td{background:#ffffff04}
 
       <!-- ─── CUENTA ─── -->
       <div id="page-banca" class="page">
-        <div class="card" style="max-width:460px">
-          <div class="card-title">CONFIGURAR MI CUENTA</div>
-          <div class="fld" style="margin-bottom:14px"><span class="lbl">CUENTA ACTUAL (USD)</span>
-            <input type="number" class="if" id="bancaIn" placeholder="Ej: 1000.00" step="0.01">
+
+        <!-- Resumo de conta -->
+        <div id="bancaSummary"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px">
+
+          <!-- Registro inicial -->
+          <div class="card">
+            <div class="card-title">REGISTRAR CUENTA INICIAL</div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">VALOR INICIAL (USD)</span>
+              <input type="number" class="if" id="bancaIn" placeholder="Ej: 1000.00" step="0.01">
+            </div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">NIVEL POR DEFECTO</span>
+              <select class="if" id="nivelDef">
+                <option value="beg">Principiante — 1%</option>
+                <option value="mid">Intermedio — 2%</option>
+                <option value="adv">Avanzado — 3%</option>
+              </select>
+            </div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">NOTA (opcional)</span>
+              <input type="text" class="if" id="bancaNote" placeholder="Ej: Cuenta aperturada">
+            </div>
+            <button class="btn btn-o" onclick="saveBanca()">REGISTRAR CUENTA</button>
           </div>
-          <div class="fld" style="margin-bottom:14px"><span class="lbl">NIVEL POR DEFECTO</span>
-            <select class="if" id="nivelDef">
-              <option value="beg">Principiante — 1%</option>
-              <option value="mid">Intermedio — 2%</option>
-              <option value="adv">Avanzado — 3%</option>
-            </select>
+
+          <!-- Nuevo depósito -->
+          <div class="card">
+            <div class="card-title" style="color:var(--ok)">REGISTRAR DEPÓSITO</div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">MONTO DEPOSITADO (USD)</span>
+              <input type="number" class="if" id="depAmount" placeholder="Ej: 500.00" step="0.01">
+            </div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">FECHA</span>
+              <input type="date" class="if" id="depDate">
+            </div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">NOTA (opcional)</span>
+              <input type="text" class="if" id="depNote" placeholder="Ej: Recarga mensual">
+            </div>
+            <button class="btn" style="background:var(--ok);color:#fff;width:100%;padding:11px;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:13px;letter-spacing:.5px" onclick="addDeposit()">+ AGREGAR DEPÓSITO</button>
           </div>
-          <button class="btn btn-o" onclick="saveBanca()">GUARDAR CONFIGURACIÓN</button>
-          <div id="bancaMsg" style="margin-top:10px;font-size:12px;color:var(--ok)"></div>
+
+          <!-- Retiro -->
+          <div class="card">
+            <div class="card-title" style="color:var(--err)">REGISTRAR RETIRO / SAQUE</div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">MONTO RETIRADO (USD)</span>
+              <input type="number" class="if" id="witAmount" placeholder="Ej: 200.00" step="0.01">
+            </div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">FECHA</span>
+              <input type="date" class="if" id="witDate">
+            </div>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">NOTA (opcional)</span>
+              <input type="text" class="if" id="witNote" placeholder="Ej: Retirada de ganancias">
+            </div>
+            <button class="btn" style="background:var(--err);color:#fff;width:100%;padding:11px;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:13px;letter-spacing:.5px" onclick="addWithdrawal()">− REGISTRAR RETIRO</button>
+          </div>
 
         </div>
+
+        <!-- Histórico -->
+        <div class="card">
+          <div class="sh"><div class="stitle">HISTORIAL DE CUENTA</div></div>
+          <div class="tw" id="bancaHistory"></div>
+        </div>
+
       </div>
 
       <!-- ─── ADMIN ─── -->
@@ -917,6 +964,8 @@ const DB = {
   saveOps(o)   { localStorage.setItem('tna_o', _enc(o)); },
   getMetas()   { return _dec(localStorage.getItem('tna_m'))  || []; },
   saveMetas(m) { localStorage.setItem('tna_m', _enc(m)); },
+  getEvents()   { return _dec(localStorage.getItem('tna_ae')) || []; },
+  saveEvents(e) { localStorage.setItem('tna_ae', _enc(e)); },
   getCU()      { try { return JSON.parse(sessionStorage.getItem('tna_cu')||'null'); } catch { return null; } },
   setCU(u)     { sessionStorage.setItem('tna_cu', JSON.stringify(u)); },
   clearCU()    { sessionStorage.removeItem('tna_cu'); },
@@ -1084,6 +1133,7 @@ function showPage(id) {
     if (id==='patrimonio')  renderPatrimonio(30);
     if (id==='metas')       renderMetas();
     if (id==='admin')       renderAdmin();
+    if (id==='banca')       { syncBancaUI(); }
     if (id==='nueva')       { calcOp(); renderBancaRes(); }
   }, 50);
 }
@@ -1094,32 +1144,149 @@ function getUserBanca() {
   const u = DB.getUsers().find(x=>x.id===CU.id);
   return u ? parseFloat(u.banca)||1000 : 1000;
 }
-// Conta atual = banca inicial configurada + PnL de todas as operações fechadas
+// Base efetiva = banca inicial + depósitos - saques
+function getEffectiveBase() {
+  if (!CU || CU.isAdmin) return 1000;
+  const base = getUserBanca();
+  const evs = DB.getEvents().filter(e => String(e.userId) === String(CU.id));
+  const dep = evs.filter(e=>e.type==='deposit').reduce((a,e)=>a+parseFloat(e.amount||0),0);
+  const wit = evs.filter(e=>e.type==='withdrawal').reduce((a,e)=>a+parseFloat(e.amount||0),0);
+  return parseFloat((base + dep - wit).toFixed(2));
+}
+// Conta atual = base efetiva + PnL de todas as operações fechadas
 function getComputedBanca() {
-  const initial = getUserBanca();
+  const base = getEffectiveBase();
   const ops = myOps().filter(o => o.resultado != null);
   const pnl = ops.reduce((a, o) => a + (parseFloat(o.resultado)||0), 0);
-  return parseFloat((initial + pnl).toFixed(2));
+  return parseFloat((base + pnl).toFixed(2));
 }
 
 function saveBanca() {
   const v = parseFloat(document.getElementById('bancaIn').value);
   const n = document.getElementById('nivelDef').value;
+  const note = (document.getElementById('bancaNote')||{}).value||'';
   if (!v||v<=0) { toast('Ingresa un valor de cuenta válido.','err'); return; }
   const users = DB.getUsers();
   const idx = users.findIndex(x=>x.id===CU.id);
   if (idx>-1) { users[idx].banca=v; users[idx].nivel=n; DB.saveUsers(users); }
   CU.banca=v; CU.nivel=n; DB.setCU(CU);
-  document.getElementById('bancaMsg').textContent='Configuración guardada con éxito.';
+  // Registrar evento inicial
+  const evs = DB.getEvents();
+  evs.push({id:String(Date.now()), userId:String(CU.id), type:'initial', amount:v,
+    date:new Date().toISOString().split('T')[0], note:note.trim(), createdAt:new Date().toISOString()});
+  DB.saveEvents(evs);
+  toast('Cuenta registrada con éxito.','ok');
   calcOp();
+  renderBancaPage();
+}
+
+function addDeposit() {
+  const amount = parseFloat(document.getElementById('depAmount').value);
+  const date   = document.getElementById('depDate').value || new Date().toISOString().split('T')[0];
+  const note   = document.getElementById('depNote').value.trim();
+  if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
+  const evs = DB.getEvents();
+  evs.push({id:String(Date.now()), userId:String(CU.id), type:'deposit', amount, date, note, createdAt:new Date().toISOString()});
+  DB.saveEvents(evs);
+  document.getElementById('depAmount').value='';
+  document.getElementById('depNote').value='';
+  toast('Depósito registrado.','ok');
+  calcOp();
+  renderBancaPage();
+}
+
+function addWithdrawal() {
+  const amount = parseFloat(document.getElementById('witAmount').value);
+  const date   = document.getElementById('witDate').value || new Date().toISOString().split('T')[0];
+  const note   = document.getElementById('witNote').value.trim();
+  if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
+  const evs = DB.getEvents();
+  evs.push({id:String(Date.now()), userId:String(CU.id), type:'withdrawal', amount, date, note, createdAt:new Date().toISOString()});
+  DB.saveEvents(evs);
+  document.getElementById('witAmount').value='';
+  document.getElementById('witNote').value='';
+  toast('Retiro registrado.','ok');
+  calcOp();
+  renderBancaPage();
+}
+
+function delAccountEvent(evId) {
+  const all   = DB.getEvents();
+  const kept  = all.filter(e => e.id !== evId);
+  DB.saveEvents(kept);
+  // Se era um evento 'initial', reverter banca do user para o anterior
+  const myEvs = kept.filter(e=>String(e.userId)===String(CU.id) && e.type==='initial');
+  if (myEvs.length) {
+    const last = myEvs[myEvs.length-1];
+    const users = DB.getUsers();
+    const idx = users.findIndex(x=>x.id===CU.id);
+    if (idx>-1) { users[idx].banca=last.amount; DB.saveUsers(users); }
+    CU.banca=last.amount; DB.setCU(CU);
+  }
+  renderBancaPage();
+  calcOp();
+}
+
+function renderBancaPage() {
+  const evs  = DB.getEvents().filter(e=>String(e.userId)===String(CU.id));
+  const base  = getUserBanca();
+  const dep   = evs.filter(e=>e.type==='deposit').reduce((a,e)=>a+parseFloat(e.amount||0),0);
+  const wit   = evs.filter(e=>e.type==='withdrawal').reduce((a,e)=>a+parseFloat(e.amount||0),0);
+  const effBase = parseFloat((base+dep-wit).toFixed(2));
+  const current = getComputedBanca();
+
+  // Resumo topo
+  const sumEl = document.getElementById('bancaSummary');
+  if (sumEl) sumEl.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px">
+      ${[
+        ['CUENTA INICIAL',fmt(base),'var(--text2)'],
+        ['DEPÓSITOS','+'+fmt(dep),'var(--ok)'],
+        ['RETIROS',dep||wit?'-'+fmt(wit):'—','var(--err)'],
+        ['BASE EFECTIVA',fmt(effBase),effBase>=base?'var(--ok)':'var(--err)'],
+        ['CUENTA ACTUAL',fmt(current),current>=base?'var(--ok)':'var(--err)'],
+      ].map(([l,v,c])=>`
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:12px 14px">
+          <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:1px;margin-bottom:5px">${l}</div>
+          <div style="font-size:17px;font-weight:900;color:${c}">${v}</div>
+        </div>`).join('')}
+    </div>`;
+
+  // Tabela de histórico
+  const histEl = document.getElementById('bancaHistory');
+  if (!histEl) return;
+  if (!evs.length) { histEl.innerHTML='<div class="empty">Sin registros aún. Configura tu cuenta arriba.</div>'; return; }
+  const sorted = [...evs].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const typeLabel = {initial:'Registro inicial',deposit:'Depósito',withdrawal:'Retiro'};
+  const typeColor = {initial:'var(--primary)',deposit:'var(--ok)',withdrawal:'var(--err)'};
+  histEl.innerHTML = `<table>
+    <thead><tr><th>FECHA</th><th>TIPO</th><th>MONTO</th><th>NOTA</th><th></th></tr></thead>
+    <tbody>${sorted.map(e=>`<tr>
+      <td style="color:var(--text3)">${e.date||''}</td>
+      <td><span class="pill po" style="color:${typeColor[e.type]};border-color:${typeColor[e.type]}25;background:${typeColor[e.type]}10">${typeLabel[e.type]||e.type}</span></td>
+      <td style="font-weight:700;color:${e.type==='withdrawal'?'var(--err)':'var(--ok)'}">${e.type==='withdrawal'?'-':'+'} ${fmt(e.amount)}</td>
+      <td style="font-size:11px;color:var(--text3)">${e.note||'—'}</td>
+      <td><button class="btn btn-red btn-sm" onclick="delAccountEvent('${e.id}')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button></td>
+    </tr>`).join('')}</tbody></table>`;
 }
 
 function syncBancaUI() {
   const u = DB.getUsers().find(x=>x.id===CU.id);
   if (u) {
-    document.getElementById('bancaIn').value = u.banca||1000;
-    document.getElementById('nivelDef').value = u.nivel||'beg';
+    const el = document.getElementById('bancaIn');
+    if (el) el.value = u.banca||1000;
+    const nl = document.getElementById('nivelDef');
+    if (nl) nl.value = u.nivel||'beg';
   }
+  // Datas padrão
+  const today = new Date().toISOString().split('T')[0];
+  const dd = document.getElementById('depDate');
+  const wd = document.getElementById('witDate');
+  if (dd && !dd.value) dd.value = today;
+  if (wd && !wd.value) wd.value = today;
+  renderBancaPage();
 }
 
 function renderBancaRes() {
@@ -1204,6 +1371,11 @@ function saveOp() {
   if (!entrada||entrada<=0) { toast('Ingresa el valor de entrada.','err'); return; }
   if (isNaN(res))           { toast('Ingresa el valor de ganancia o pérdida de la operación.','err'); return; }
 
+  // Auto-sign: PERDIDA → negativo, GANADA → positivo
+  let resultado = res;
+  if (status === 'PERDIDA' && resultado > 0) resultado = -resultado;
+  if (status === 'GANADA'  && resultado < 0) resultado = -resultado;
+
   const ganancia = entrada*sgPct/100;
   const pctBanca = (ganancia/banca)*100;
 
@@ -1221,7 +1393,7 @@ function saveOp() {
       slPct, sgPct,
       slVal: isLong ? entrada*(1-slPct/100) : entrada*(1+slPct/100),
       sgVal: isLong ? entrada*(1+sgPct/100) : entrada*(1-sgPct/100),
-      resultado: res,
+      resultado,
       status,
       obs: document.getElementById('opObs').value.trim(),
       bancaSnapshot: banca,
@@ -1437,7 +1609,7 @@ function renderPnlPer() {
 function renderRecentTrades(ops) {
   const el = document.getElementById('recentTable');
   if (!ops.length) {
-    el.innerHTML=`<div class="empty">
+    el.innerHTML<`<div class="empty">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Sin operaciones registradas aún.</div>`;
     return;
@@ -1586,7 +1758,7 @@ function renderHistorial() {
 
   const el = document.getElementById('histTable');
   if (!ops.length) {
-    el.innerHTML<`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
+    el.innerHTML=`<div class="empty">Sin operaciones para los filtros seleccionados.</div>`; return;
   }
   el.innerHTML = buildTable(ops);
 }
@@ -1775,7 +1947,7 @@ function renderAdmin() {
       <td style="color:var(--primary);font-weight:700">${fmt(u.banca||1000)}</td>
       <td style="color:var(--text3);font-size:11px">${u.registeredAt?new Date(u.registeredAt).toLocaleDateString('es-ES'):'—'}</td>
     </tr>`).join('');
-    document.getElementById('adminUsers').innerHTML=`<table>
+    document.getElementById('adminUsers').innerHTML<`<table>
       <thead><tr><th>NOMBRE</th><th>EMAIL</th><th>WHATSAPP</th><th>PAÍS</th><th>CUENTA</th><th>REGISTRO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
@@ -1797,7 +1969,7 @@ function renderAdmin() {
         <td>${sPill(o.status)}</td>
       </tr>`;
     }).join('');
-    document.getElementById('adminOps').innerHTML<`<table>
+    document.getElementById('adminOps').innerHTML=`<table>
       <thead><tr><th>FECHA</th><th>USUARIO</th><th>ACTIVO</th><th>DIR.</th><th>ENTRADA</th><th>P&amp;L</th><th>RESULTADO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
