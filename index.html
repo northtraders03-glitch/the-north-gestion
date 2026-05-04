@@ -621,11 +621,11 @@ tr:hover td{background:#ffffff04}
               <div class="divider"></div>
 
               <div class="fr fr2">
-                <div class="fld"><span class="lbl">RESULTADO REAL (USD)</span>
-                  <input type="number" class="if" id="opRes" placeholder="0.00" step="0.01">
+                <div class="fld"><span class="lbl">GANANCIA / PÉRDIDA (USD)</span>
+                  <input type="number" class="if" id="opRes" placeholder="Ex: 25.00 ou -15.00" step="0.01">
                 </div>
                 <div class="fld"><span class="lbl">RESULTADO</span>
-                  <select class="if" id="opStatus" onchange="autoFillRes()">
+                  <select class="if" id="opStatus">
                     <option value="GANADA">GANADA</option>
                     <option value="PERDIDA">PERDIDA</option>
                   </select>
@@ -1098,7 +1098,7 @@ function getUserBanca() {
 function getComputedBanca() {
   const initial = getUserBanca();
   const ops = myOps().filter(o => o.resultado != null);
-  const pnl = ops.reduce((a, o) => a + (o.resultado - o.entrada), 0);
+  const pnl = ops.reduce((a, o) => a + (parseFloat(o.resultado)||0), 0);
   return parseFloat((initial + pnl).toFixed(2));
 }
 
@@ -1190,19 +1190,7 @@ function calcOp() {
 
 /* ════════ SAVE OPERATION ════════ */
 function autoFillRes() {
-  const entrada = parseFloat(document.getElementById('opEntrada').value);
-  if (!entrada || isNaN(entrada) || entrada <= 0) return;
-  const status = document.getElementById('opStatus').value;
-  const isLong = document.getElementById('opDir').value === 'COMPRA';
-  const slPct  = parseFloat(document.getElementById('slRange').value) || 10;
-  const sgPct  = parseFloat(document.getElementById('sgRange').value) || 3;
-  if (status === 'PERDIDA') {
-    const slV = isLong ? entrada*(1-slPct/100) : entrada*(1+slPct/100);
-    document.getElementById('opRes').value = slV.toFixed(2);
-  } else {
-    const sgV = isLong ? entrada*(1+sgPct/100) : entrada*(1-sgPct/100);
-    document.getElementById('opRes').value = sgV.toFixed(2);
-  }
+  // SL/SG são apenas figurativos — não preenche o resultado automaticamente
 }
 function saveOp() {
   const entrada = parseFloat(document.getElementById('opEntrada').value);
@@ -1214,7 +1202,7 @@ function saveOp() {
   const dir     = document.getElementById('opDir').value;
 
   if (!entrada||entrada<=0) { toast('Ingresa el valor de entrada.','err'); return; }
-  if (isNaN(res)||res<=0)   { toast('Ingresa el resultado real de la operación.','err'); return; }
+  if (isNaN(res))           { toast('Ingresa el valor de ganancia o pérdida de la operación.','err'); return; }
 
   const ganancia = entrada*sgPct/100;
   const pctBanca = (ganancia/banca)*100;
@@ -1293,14 +1281,14 @@ function renderDash() {
 
   // All closed ops for P&L
   const cl   = ops.filter(o=>o.resultado!=null && o.resultado!==undefined);
-  const pnl  = cl.reduce((a,o)=>a+(o.resultado-o.entrada),0);
-  const wins = cl.filter(o=>o.resultado>o.entrada).length;
+  const pnl  = cl.reduce((a,o)=>a+(parseFloat(o.resultado)||0),0);
+  const wins = cl.filter(o=>(parseFloat(o.resultado)||0)>0).length;
   const wr   = cl.length ? (wins/cl.length*100).toFixed(1) : 0;
 
   // Today
   const today = new Date().toISOString().split('T')[0];
   const todayOps = ops.filter(o=>o.fecha===today);
-  const todayPnl = todayOps.reduce((a,o)=>o.resultado!=null?a+(o.resultado-o.entrada):a, 0);
+  const todayPnl = todayOps.reduce((a,o)=>o.resultado!=null?a+(parseFloat(o.resultado)||0):a, 0);
 
   document.getElementById('statCards').innerHTML = `
     <div class="stat">
@@ -1386,7 +1374,7 @@ function calcPnlStats(ops) {
   const entradas = ops.length;
   const ganhas   = closed.filter(o => o.status === 'GANADA').length;
   const perdidas = closed.filter(o => o.status === 'PERDIDA').length;
-  const pnl      = closed.reduce((a,o) => a + (o.resultado - o.entrada), 0);
+  const pnl      = closed.reduce((a,o) => a + (parseFloat(o.resultado)||0), 0);
   const wr       = closed.length ? (ganhas / closed.length * 100).toFixed(1) : null;
   return { entradas, ganhas, perdidas, pnl, wr };
 }
@@ -1459,7 +1447,7 @@ function renderRecentTrades(ops) {
 
 function buildTable(ops) {
   const rows = ops.map(o=>{
-    const pnl = o.resultado!=null ? o.resultado-o.entrada : null;
+    const pnl = o.resultado!=null ? (parseFloat(o.resultado)||0) : null;
     return `<tr>
       <td style="color:var(--text3)">${o.fecha}</td>
       <td><span class="pill po">${o.activo}</span></td>
@@ -1548,7 +1536,7 @@ function buildWeeklyChart(ops, weeks) {
     const ds=d.toISOString().split('T')[0];
     labels.push(d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'}));
     const pnl=ops.filter(o=>o.fecha===ds&&o.resultado!=null)
-               .reduce((a,o)=>a+(o.resultado-o.entrada),0);
+               .reduce((a,o)=>a+(parseFloat(o.resultado)||0),0);
     data.push(parseFloat(pnl.toFixed(2)));
   }
   mkChart('cWeekly','bar',{
@@ -1566,7 +1554,7 @@ function buildMonthlyChart(ops, months) {
     const ym=d.toISOString().slice(0,7);
     labels.push(d.toLocaleDateString('es-ES',{month:'short',year:'2-digit'}));
     const pnl=ops.filter(o=>o.fecha.startsWith(ym)&&o.resultado!=null)
-               .reduce((a,o)=>a+(o.resultado-o.entrada),0);
+               .reduce((a,o)=>a+(parseFloat(o.resultado)||0),0);
     data.push(parseFloat(pnl.toFixed(2)));
   }
   mkChart('cMonthly','bar',{
@@ -1612,7 +1600,7 @@ function renderGraficos(days) {
   const groups={};
   filtered.forEach(o=>{
     if(!groups[o.fecha]) groups[o.fecha]=0;
-    groups[o.fecha]+=o.resultado-o.entrada;
+    groups[o.fecha]+=(parseFloat(o.resultado)||0);
   });
   const labels=Object.keys(groups).sort();
   const data=labels.map(l=>parseFloat(groups[l].toFixed(2)));
@@ -1634,7 +1622,7 @@ function renderGraficos(days) {
 
   const wrates=activos.map(a=>{
     const ao=ops.filter(o=>o.activo===a);
-    return ao.length?(ao.filter(o=>o.resultado>o.entrada).length/ao.length*100).toFixed(1):0;
+    return ao.length?(ao.filter(o=>(parseFloat(o.resultado)||0)>0).length/ao.length*100).toFixed(1):0;
   });
   mkChart('cWinrate','bar',{
     labels:activos, datasets:[{label:'Win Rate %',data:wrates,
@@ -1664,7 +1652,7 @@ function renderPatrimonio(days) {
   const groups={};
   filtered.forEach(o=>{
     if(!groups[o.fecha]) groups[o.fecha]=0;
-    groups[o.fecha]+=o.resultado-o.entrada;
+    groups[o.fecha]+=(parseFloat(o.resultado)||0);
   });
   Object.keys(groups).sort().forEach(d=>{
     running+=groups[d];
@@ -1697,7 +1685,7 @@ function renderMetas() {
   const metas=myMetas();
   const banca=getComputedBanca();
   const ops=myOps().filter(o=>o.resultado!=null);
-  const pnl=ops.reduce((a,o)=>a+(o.resultado-o.entrada),0);
+  const pnl=ops.reduce((a,o)=>a+(parseFloat(o.resultado)||0),0);
 
   document.getElementById('metMetrics').innerHTML=`
     <div style="display:grid;gap:0">
@@ -1798,7 +1786,7 @@ function renderAdmin() {
   } else {
     const rows=ops.slice().reverse().map(o=>{
       const u=users.find(x=>String(x.id)===String(o.userId));
-      const pnl=o.resultado!=null?o.resultado-o.entrada:null;
+      const pnl=o.resultado!=null?(parseFloat(o.resultado)||0):null;
       return `<tr>
         <td style="color:var(--text3);font-size:11px">${o.fecha}</td>
         <td style="color:var(--text);font-size:12px">${u?u.name:'—'}</td>
@@ -1809,7 +1797,7 @@ function renderAdmin() {
         <td>${sPill(o.status)}</td>
       </tr>`;
     }).join('');
-    document.getElementById('adminOps').innerHTML=`<table>
+    document.getElementById('adminOps').innerHTML<`<table>
       <thead><tr><th>FECHA</th><th>USUARIO</th><th>ACTIVO</th><th>DIR.</th><th>ENTRADA</th><th>P&amp;L</th><th>RESULTADO</th></tr></thead>
       <tbody>${rows}</tbody></table>`;
   }
