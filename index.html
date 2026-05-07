@@ -318,7 +318,7 @@ tr:hover td{background:#ffffff04}
   /* Admin tab: scroll horizontal */
   .admin-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   /* Filtros de gráfico: scroll horizontal */
-  .ch-filters{flex-wrap:nowraw;overflow-x:auto;padding-bottom:4px}
+  .ch-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
   /* Popup full width no mobile */
   .popup-box{max-width:100%;border-radius:12px}
 }
@@ -781,7 +781,7 @@ tr:hover td{background:#ffffff04}
       </div>
 
       <!-- ─── CUENTA ─── -->
-      <div id="page-banca" class="page">
+       <div id="page-banca" class="page">
 
         <!-- Resumo de conta -->
         <div id="bancaSummary"></div>
@@ -810,7 +810,7 @@ tr:hover td{background:#ffffff04}
           <!-- Nuevo depósito -->
           <div class="card">
             <div class="card-title" style="color:var(--ok)">REGISTRAR DEPÓSITO</div>
-            <div class="fld" style="margin-bottom:10px"><span class="lbl">MONTO DEPOSITADO (USD)</span>
+            <div class="fld" style="margin-bottom:10px"><span class="lbl">MONTO DEPOSITAD� USD"�/span>
               <input type="number" class="if" id="depAmount" placeholder="Ej: 500.00" step="0.01">
             </div>
             <div class="fld" style="margin-bottom:10px"><span class="lbl">FECHA</span>
@@ -824,7 +824,7 @@ tr:hover td{background:#ffffff04}
 
           <!-- Retiro -->
           <div class="card">
-            <div class="card-title" style="color:var(--err)">REGISTRAR RETIRO / SAQUE</div>
+            <div class="card-title" style="color:var(--err)">REGISTRAR RETIRO / SAQUE </div>
             <div class="fld" style="margin-bottom:10px"><span class="lbl">MONTO RETIRADO (USD)</span>
               <input type="number" class="if" id="witAmount" placeholder="Ej: 200.00" step="0.01">
             </div>
@@ -1020,7 +1020,7 @@ function doLogin() {
 }
 
 function doRegister() {
-  const name = document.getElementById('rn').value.trim();
+ nst name = document.getElementById('rn').value.trim();
   const email= document.getElementById('re').value.trim().toLowerCase();
   const wa   = document.getElementById('rw').value.trim();
   const ctry = document.getElementById('rc').value;
@@ -1175,9 +1175,11 @@ function saveBanca() {
   evs.push({id:String(Date.now()), userId:String(CU.id), type:'initial', amount:v,
     date:new Date().toISOString().split('T')[0], note:note.trim(), createdAt:new Date().toISOString()});
   DB.saveEvents(evs);
-  toast('Cuenta registrada con éxito.','ok');
   calcOp();
   renderBancaPage();
+  toast('✅ Conta registrada. Conta Atual: ' + fmt(getComputedBanca()), 'ok');
+  const sumEl = document.getElementById('bancaSummary');
+  if (sumEl) sumEl.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function addDeposit() {
@@ -1190,9 +1192,12 @@ function addDeposit() {
   DB.saveEvents(evs);
   document.getElementById('depAmount').value='';
   document.getElementById('depNote').value='';
-  toast('Depósito registrado.','ok');
   calcOp();
   renderBancaPage();
+  const nova = getComputedBanca();
+  toast('✅ Depósito registrado. Conta Atual: ' + fmt(nova), 'ok');
+  const sumEl = document.getElementById('bancaSummary');
+  if (sumEl) sumEl.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function addWithdrawal() {
@@ -1205,9 +1210,12 @@ function addWithdrawal() {
   DB.saveEvents(evs);
   document.getElementById('witAmount').value='';
   document.getElementById('witNote').value='';
-  toast('Retiro registrado.','ok');
   calcOp();
   renderBancaPage();
+  const nova = getComputedBanca();
+  toast('✅ Retiro registrado. Conta Atual: ' + fmt(nova), 'ok');
+  const sumEl = document.getElementById('bancaSummary');
+  if (sumEl) sumEl.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function delAccountEvent(evId) {
@@ -1725,7 +1733,7 @@ function buildMonthlyChart(ops, months) {
     const d=new Date(); d.setMonth(d.getMonth()-i);
     const ym=d.toISOString().slice(0,7);
     labels.push(d.toLocaleDateString('es-ES',{month:'short',year:'2-digit'}));
-    const pnl=ops.filter(o=>o.fecha.startsWith(ym)&&o.resultado!=null)
+    const pnl9ops.filter(o=>o.fecha.startsWith(ym)&&o.resultado!=null)
                .reduce((a,o)=>a+(parseFloat(o.resultado)||0),0);
     data.push(parseFloat(pnl.toFixed(2)));
   }
