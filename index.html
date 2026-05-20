@@ -1164,6 +1164,11 @@ function parseMoneyInput(value) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function money(value) {
+  const n = parseMoneyInput(value);
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
 function getCurrentUserRecord() {
   if (!CU || CU.isAdmin) return null;
   return DB.getUsers().find(x =>
@@ -1202,12 +1207,12 @@ function getStoredCurrentBanca() {
 
 function saveStoredCurrentBanca(value) {
   if (!CU || CU.isAdmin) return;
-  const amount = parseFloat(value.toFixed(2));
+  const amount = money(value);
   localStorage.setItem(balanceKey(), _enc({ current: amount, updatedAt: new Date().toISOString() }));
 }
 
 function saveUserInitialBanca(value, nivel) {
-  const amount = parseFloat(value.toFixed(2));
+  const amount = money(value);
   const users = DB.getUsers();
   const idx = users.findIndex(x =>
     String(x.id) === String(CU.id) ||
@@ -1480,8 +1485,8 @@ function autoFillRes() {
   // SL/SG são apenas figurativos — não preenche o resultado automaticamente
 }
 function saveOp() {
-  const entrada = parseFloat(document.getElementById('opEntrada').value);
-  const res     = parseFloat(document.getElementById('opRes').value);
+  const entrada = money(document.getElementById('opEntrada').value);
+  const res     = money(document.getElementById('opRes').value);
   const status  = document.getElementById('opStatus').value;
   const banca   = getComputedBanca();
   const slPct   = parseFloat(document.getElementById('slRange').value)||10;
@@ -1495,6 +1500,7 @@ function saveOp() {
   let resultado = res;
   if (status === 'PERDIDA' && resultado > 0) resultado = -resultado;
   if (status === 'GANADA'  && resultado < 0) resultado = -resultado;
+  resultado = money(resultado);
 
   const ganancia = entrada*sgPct/100;
   const pctBanca = (ganancia/banca)*100;
@@ -1511,8 +1517,8 @@ function saveOp() {
       pctRisco: lvlPct[selLvl]*100,
       entrada,
       slPct, sgPct,
-      slVal: isLong ? entrada*(1-slPct/100) : entrada*(1+slPct/100),
-      sgVal: isLong ? entrada*(1+sgPct/100) : entrada*(1-sgPct/100),
+      slVal: money(isLong ? entrada*(1-slPct/100) : entrada*(1+slPct/100)),
+      sgVal: money(isLong ? entrada*(1+sgPct/100) : entrada*(1-sgPct/100)),
       resultado,
       status,
       obs: document.getElementById('opObs').value.trim(),
@@ -2113,7 +2119,7 @@ function exportCSV() {
 
 /* ════════ HELPERS ════════ */
 function fmt(v){
-  const n=parseFloat(v||0);
+  const n=money(v);
   const dec=n%1===0?0:2;
   return '$'+n.toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:2});
 }
