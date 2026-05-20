@@ -1151,6 +1151,7 @@ function showPage(id) {
 function parseMoneyInput(value) {
   if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
   let s = String(value || '').trim().replace(/\s/g, '');
+  s = s.replace(/[^\d,.\-+]/g, '');
   if (!s) return 0;
   if (s.includes('.') && s.includes(',')) {
     s = s.replace(/\./g, '').replace(',', '.');
