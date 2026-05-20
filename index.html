@@ -1147,10 +1147,37 @@ function showPage(id) {
 }
 
 /* ════════ BANCA ════════ */
+function parseMoneyInput(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  let s = String(value || '').trim().replace(/\s/g, '');
+  if (!s) return 0;
+  if (s.includes('.') && s.includes(',')) {
+    s = s.replace(/\./g, '').replace(',', '.');
+  } else if (s.includes(',')) {
+    s = s.replace(',', '.');
+  } else if (/^\d{1,3}(\.\d{3})+$/.test(s)) {
+    s = s.replace(/\./g, '');
+  }
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function getCurrentUserRecord() {
+  if (!CU || CU.isAdmin) return null;
+  return DB.getUsers().find(x =>
+    String(x.id) === String(CU.id) ||
+    (x.email && CU.email && x.email.toLowerCase() === CU.email.toLowerCase())
+  ) || null;
+}
+
 function getUserBanca() {
   if (!CU || CU.isAdmin) return 1000;
-  const u = DB.getUsers().find(x=>x.id===CU.id);
-  return u ? parseFloat(u.banca)||1000 : 1000;
+  const u = getCurrentUserRecord();
+  const saved = parseMoneyInput(u?.banca);
+  const session = parseMoneyInput(CU.banca);
+  if (saved > 0) return saved;
+  if (session > 0) return session;
+  return 1000;
 }
 
 function getAccountTotals() {
@@ -1159,10 +1186,10 @@ function getAccountTotals() {
   }
   const base = getUserBanca();
   const evs = DB.getEvents().filter(e => String(e.userId) === String(CU.id));
-  const dep = evs.filter(e=>e.type==='deposit').reduce((a,e)=>a+parseFloat(e.amount||0),0);
-  const wit = evs.filter(e=>e.type==='withdrawal').reduce((a,e)=>a+parseFloat(e.amount||0),0);
+  const dep = evs.filter(e=>e.type==='deposit').reduce((a,e)=>a+parseMoneyInput(e.amount),0);
+  const wit = evs.filter(e=>e.type==='withdrawal').reduce((a,e)=>a+parseMoneyInput(e.amount),0);
   const ops = myOps().filter(o => o.resultado != null);
-  const pnl = ops.reduce((a, o) => a + (parseFloat(o.resultado)||0), 0);
+  const pnl = ops.reduce((a, o) => a + parseMoneyInput(o.resultado), 0);
   const effectiveBase = parseFloat((base + dep - wit).toFixed(2));
   const current = parseFloat((effectiveBase + pnl).toFixed(2));
   return { base, deposits:dep, withdrawals:wit, effectiveBase, pnl, current };
@@ -1186,12 +1213,15 @@ function refreshAccountViews() {
 }
 
 function saveBanca() {
-  const v = parseFloat(document.getElementById('bancaIn').value);
+  const v = parseMoneyInput(document.getElementById('bancaIn').value);
   const n = document.getElementById('nivelDef').value;
   const note = (document.getElementById('bancaNote')||{}).value||'';
   if (!v||v<=0) { toast('Ingresa un valor de cuenta válido.','err'); return; }
   const users = DB.getUsers();
-  const idx = users.findIndex(x=>x.id===CU.id);
+  const idx = users.findIndex(x=>
+    String(x.id) === String(CU.id) ||
+    (x.email && CU.email && x.email.toLowerCase() === CU.email.toLowerCase())
+  );
   if (idx>-1) { users[idx].banca=v; users[idx].nivel=n; DB.saveUsers(users); }
   CU.banca=v; CU.nivel=n; DB.setCU(CU);
   // Registrar evento inicial
@@ -1207,7 +1237,7 @@ function saveBanca() {
 }
 
 function addDeposit() {
-  const amount = parseFloat(document.getElementById('depAmount').value);
+  const amount = parseMoneyInput(document.getElementById('depAmount').value);
   const date   = document.getElementById('depDate').value || new Date().toISOString().split('T')[0];
   const note   = document.getElementById('depNote').value.trim();
   if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
@@ -1225,7 +1255,7 @@ function addDeposit() {
 }
 
 function addWithdrawal() {
-  const amount = parseFloat(document.getElementById('witAmount').value);
+  const amount = parseMoneyInput(document.getElementById('witAmount').value);
   const date   = document.getElementById('witDate').value || new Date().toISOString().split('T')[0];
   const note   = document.getElementById('witNote').value.trim();
   if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
@@ -1251,9 +1281,13 @@ function delAccountEvent(evId) {
   if (myEvs.length) {
     const last = myEvs[myEvs.length-1];
     const users = DB.getUsers();
-    const idx = users.findIndex(x=>x.id===CU.id);
-    if (idx>-1) { users[idx].banca=last.amount; DB.saveUsers(users); }
-    CU.banca=last.amount; DB.setCU(CU);
+    const idx = users.findIndex(x=>
+      String(x.id) === String(CU.id) ||
+      (x.email && CU.email && x.email.toLowerCase() === CU.email.toLowerCase())
+    );
+    const amount = parseMoneyInput(last.amount);
+    if (idx>-1) { users[idx].banca=amount; DB.saveUsers(users); }
+    CU.banca=amount; DB.setCU(CU);
   }
   calcOp();
   refreshAccountViews();
@@ -1301,10 +1335,10 @@ function renderBancaPage() {
 }
 
 function syncBancaUI() {
-  const u = DB.getUsers().find(x=>x.id===CU.id);
+  const u = getCurrentUserRecord();
   if (u) {
     const el = document.getElementById('bancaIn');
-    if (el) el.value = u.banca||1000;
+    if (el) el.value = getUserBanca();
     const nl = document.getElementById('nivelDef');
     if (nl) nl.value = u.nivel||'beg';
   }
