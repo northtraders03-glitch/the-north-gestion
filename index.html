@@ -629,14 +629,14 @@ tr:hover td{background:#ffffff04}
               <div class="divider"></div>
 
               <div class="fr fr2">
-                <div class="fld"><span class="lbl">GANANCIA / PÉRDIDA (USD)</span>
-                  <input type="number" class="if" id="opRes" placeholder="Ex: 25.00 ou -15.00" step="0.01">
-                </div>
                 <div class="fld"><span class="lbl">RESULTADO</span>
-                  <select class="if" id="opStatus">
+                  <select class="if" id="opStatus" onchange="calcOp()">
                     <option value="GANADA">GANADA</option>
                     <option value="PERDIDA">PERDIDA</option>
                   </select>
+                </div>
+                <div class="fld"><span class="lbl">P&L AUTOMÁTICO</span>
+                  <div class="if" id="opAutoRes" style="display:flex;align-items:center;font-weight:900;color:var(--ok)">$0.00</div>
                 </div>
               </div>
 
@@ -1461,7 +1461,7 @@ function calcOp() {
   document.getElementById('lv2').textContent = fmt(banca*0.02);
   document.getElementById('lv3').textContent = fmt(banca*0.03);
 
-  const entrada = parseFloat(document.getElementById('opEntrada').value)||0;
+  const entrada = money(document.getElementById('opEntrada').value);
   const slPct = parseFloat(document.getElementById('slRange').value)||10;
   const sgPct = parseFloat(document.getElementById('sgRange').value)||3;
   const dir   = document.getElementById('opDir').value;
@@ -1478,15 +1478,28 @@ function calcOp() {
   }
   document.getElementById('slPD').textContent = `— ${slPct}%`;
   document.getElementById('sgPD').textContent = `+ ${sgPct}%`;
+
+  const autoEl = document.getElementById('opAutoRes');
+  if (autoEl) {
+    const autoRes = getAutoOperationResult();
+    autoEl.textContent = fmtPN(autoRes);
+    autoEl.style.color = autoRes >= 0 ? 'var(--ok)' : 'var(--err)';
+  }
 }
 
 /* ════════ SAVE OPERATION ════════ */
 function autoFillRes() {
-  // SL/SG são apenas figurativos — não preenche o resultado automaticamente
+  return getAutoOperationResult();
+}
+
+function getAutoOperationResult() {
+  const entrada = money(document.getElementById('opEntrada').value);
+  const status = document.getElementById('opStatus').value;
+  if (!entrada || entrada <= 0) return 0;
+  return status === 'PERDIDA' ? money(-entrada) : money(entrada * 0.89);
 }
 function saveOp() {
   const entrada = money(document.getElementById('opEntrada').value);
-  const res     = money(document.getElementById('opRes').value);
   const status  = document.getElementById('opStatus').value;
   const banca   = getComputedBanca();
   const slPct   = parseFloat(document.getElementById('slRange').value)||10;
@@ -1494,13 +1507,7 @@ function saveOp() {
   const dir     = document.getElementById('opDir').value;
 
   if (!entrada||entrada<=0) { toast('Ingresa el valor de entrada.','err'); return; }
-  if (isNaN(res))           { toast('Ingresa el valor de ganancia o pérdida de la operación.','err'); return; }
-
-  // Auto-sign: PERDIDA → negativo, GANADA → positivo
-  let resultado = res;
-  if (status === 'PERDIDA' && resultado > 0) resultado = -resultado;
-  if (status === 'GANADA'  && resultado < 0) resultado = -resultado;
-  resultado = money(resultado);
+  const resultado = getAutoOperationResult();
 
   const ganancia = entrada*sgPct/100;
   const pctBanca = (ganancia/banca)*100;
@@ -1533,7 +1540,6 @@ function saveOp() {
 
     // Reset form
     document.getElementById('opEntrada').value='';
-    document.getElementById('opRes').value='';
     document.getElementById('opObs').value='';
     document.getElementById('opStatus').value='GANADA';
     selLvl='beg';
