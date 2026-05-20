@@ -984,7 +984,7 @@ let CU = null;          // current user
 let selLvl = 'beg';    // selected level
 let riskCb  = null;     // risk popup callback
 let charts  = {};       // Chart.js instances
-const APP_VERSION = 'balance-history-v2';
+const APP_VERSION = 'balance-ledger-v1';
 
 /* ════════ INIT ════════ */
 window.onload = () => {
@@ -1181,7 +1181,32 @@ function normalizeAccountEventType(type) {
   return t;
 }
 
-function saveCurrentUserBanca(value, nivel) {
+function currentUserKey() {
+  if (!CU || CU.isAdmin) return '';
+  return String(CU.id || CU.email || '').replace(/[^\w.-]/g, '_');
+}
+
+function balanceKey() {
+  return 'tna_balance_' + currentUserKey();
+}
+
+function getStoredCurrentBanca() {
+  if (!CU || CU.isAdmin) return null;
+  const raw = localStorage.getItem(balanceKey());
+  if (!raw) return null;
+  const parsed = _dec(raw);
+  if (!parsed || parsed.current === undefined || parsed.current === null) return null;
+  const amount = parseMoneyInput(parsed && parsed.current);
+  return Number.isFinite(amount) ? amount : null;
+}
+
+function saveStoredCurrentBanca(value) {
+  if (!CU || CU.isAdmin) return;
+  const amount = parseFloat(value.toFixed(2));
+  localStorage.setItem(balanceKey(), _enc({ current: amount, updatedAt: new Date().toISOString() }));
+}
+
+function saveUserInitialBanca(value, nivel) {
   const amount = parseFloat(value.toFixed(2));
   const users = DB.getUsers();
   const idx = users.findIndex(x =>
@@ -1196,6 +1221,7 @@ function saveCurrentUserBanca(value, nivel) {
   CU.banca = amount;
   if (nivel) CU.nivel = nivel;
   DB.setCU(CU);
+  saveStoredCurrentBanca(amount);
 }
 
 function getUserBanca() {
@@ -1223,7 +1249,8 @@ function getAccountTotals() {
   const ops = myOps().filter(o => o.resultado != null);
   const pnl = ops.reduce((a, o) => a + parseMoneyInput(o.resultado), 0);
   const effectiveBase = parseFloat((base + dep - wit).toFixed(2));
-  const current = parseFloat((effectiveBase + pnl).toFixed(2));
+  const storedCurrent = getStoredCurrentBanca();
+  const current = storedCurrent !== null ? storedCurrent : parseFloat((effectiveBase + pnl).toFixed(2));
   return { base, deposits:dep, withdrawals:wit, effectiveBase, pnl, current };
 }
 // Base efetiva = banca inicial + depósitos - saques
@@ -1232,7 +1259,8 @@ function getEffectiveBase() {
 }
 // Conta atual = base efetiva + PnL de todas as operações fechadas
 function getComputedBanca() {
-  return getAccountTotals().current;
+  const storedCurrent = getStoredCurrentBanca();
+  return storedCurrent !== null ? storedCurrent : getAccountTotals().current;
 }
 
 function refreshAccountViews() {
@@ -1249,7 +1277,7 @@ function saveBanca() {
   const n = document.getElementById('nivelDef').value;
   const note = (document.getElementById('bancaNote')||{}).value||'';
   if (!v||v<=0) { toast('Ingresa un valor de cuenta válido.','err'); return; }
-  saveCurrentUserBanca(v, n);
+  saveUserInitialBanca(v, n);
   // Registrar evento inicial
   const evs = DB.getEvents();
   evs.push({id:String(Date.now()), userId:String(CU.id), type:'initial', amount:v,
@@ -1267,6 +1295,7 @@ function addDeposit() {
   const date   = document.getElementById('depDate').value || new Date().toISOString().split('T')[0];
   const note   = document.getElementById('depNote').value.trim();
   if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
+  saveStoredCurrentBanca(getComputedBanca() + amount);
   const evs = DB.getEvents();
   evs.push({id:String(Date.now()), userId:String(CU.id), type:'deposit', amount, date, note, createdAt:new Date().toISOString()});
   DB.saveEvents(evs);
@@ -1285,6 +1314,7 @@ function addWithdrawal() {
   const date   = document.getElementById('witDate').value || new Date().toISOString().split('T')[0];
   const note   = document.getElementById('witNote').value.trim();
   if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
+  saveStoredCurrentBanca(getComputedBanca() - amount);
   const evs = DB.getEvents();
   evs.push({id:String(Date.now()), userId:String(CU.id), type:'withdrawal', amount, date, note, createdAt:new Date().toISOString()});
   DB.saveEvents(evs);
@@ -1301,15 +1331,18 @@ function addWithdrawal() {
 function delAccountEvent(evId) {
   const all   = DB.getEvents();
   const removed = all.find(e => e.id === evId);
+  const beforeCurrent = getComputedBanca();
   const kept  = all.filter(e => e.id !== evId);
   DB.saveEvents(kept);
   const removedType = normalizeAccountEventType(removed?.type);
+  if (removedType === 'deposit') saveStoredCurrentBanca(beforeCurrent - parseMoneyInput(removed.amount));
+  if (removedType === 'withdrawal') saveStoredCurrentBanca(beforeCurrent + parseMoneyInput(removed.amount));
   // Se era um evento 'initial', reverter banca do user para o anterior
   const myEvs = kept.filter(e=>String(e.userId)===String(CU.id) && normalizeAccountEventType(e.type)==='initial');
   if (removed && removedType === 'initial' && myEvs.length) {
     const last = myEvs[myEvs.length-1];
     const amount = parseMoneyInput(last.amount);
-    saveCurrentUserBanca(amount);
+    saveUserInitialBanca(amount);
   }
   calcOp();
   refreshAccountViews();
@@ -1490,6 +1523,7 @@ function saveOp() {
     const ops = DB.getOps();
     ops.push(op);
     DB.saveOps(ops);
+    saveStoredCurrentBanca(banca + resultado);
 
     // Reset form
     document.getElementById('opEntrada').value='';
@@ -1745,6 +1779,10 @@ function delOp(btn) {
 
   try {
     const all  = DB.getOps();
+    const removed = all.find(o => String(o.id) === String(id));
+    if (removed && removed.resultado != null) {
+      saveStoredCurrentBanca(getComputedBanca() - parseMoneyInput(removed.resultado));
+    }
     const kept = all.filter(o => String(o.id) !== String(id));
     DB.saveOps(kept);
     toast('Operación eliminada.','ok');
