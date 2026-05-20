@@ -984,6 +984,7 @@ let CU = null;          // current user
 let selLvl = 'beg';    // selected level
 let riskCb  = null;     // risk popup callback
 let charts  = {};       // Chart.js instances
+const APP_VERSION = 'balance-history-v2';
 
 /* ════════ INIT ════════ */
 window.onload = () => {
@@ -1210,15 +1211,17 @@ function getAccountTotals() {
   if (!CU || CU.isAdmin) {
     return { base:1000, deposits:0, withdrawals:0, effectiveBase:1000, pnl:0, current:1000 };
   }
-  const base = getUserBanca();
   const evs = DB.getEvents().filter(e => String(e.userId) === String(CU.id));
+  const initialEvents = evs.filter(e=>normalizeAccountEventType(e.type)==='initial');
+  const initialFromEvents = initialEvents.length
+    ? parseMoneyInput(initialEvents[initialEvents.length - 1].amount)
+    : 0;
+  const base = initialFromEvents > 0 ? initialFromEvents : getUserBanca();
   const dep = evs.filter(e=>normalizeAccountEventType(e.type)==='deposit').reduce((a,e)=>a+parseMoneyInput(e.amount),0);
   const wit = evs.filter(e=>normalizeAccountEventType(e.type)==='withdrawal').reduce((a,e)=>a+parseMoneyInput(e.amount),0);
-  const pendingDep = evs.filter(e=>normalizeAccountEventType(e.type)==='deposit' && !e.appliedToBalance).reduce((a,e)=>a+parseMoneyInput(e.amount),0);
-  const pendingWit = evs.filter(e=>normalizeAccountEventType(e.type)==='withdrawal' && !e.appliedToBalance).reduce((a,e)=>a+parseMoneyInput(e.amount),0);
   const ops = myOps().filter(o => o.resultado != null);
   const pnl = ops.reduce((a, o) => a + parseMoneyInput(o.resultado), 0);
-  const effectiveBase = parseFloat((base + pendingDep - pendingWit).toFixed(2));
+  const effectiveBase = parseFloat((base + dep - wit).toFixed(2));
   const current = parseFloat((effectiveBase + pnl).toFixed(2));
   return { base, deposits:dep, withdrawals:wit, effectiveBase, pnl, current };
 }
@@ -1263,14 +1266,8 @@ function addDeposit() {
   const date   = document.getElementById('depDate').value || new Date().toISOString().split('T')[0];
   const note   = document.getElementById('depNote').value.trim();
   if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
-  const before = getAccountTotals();
-  saveCurrentUserBanca(before.effectiveBase + amount);
-  const evs = DB.getEvents().map(e =>
-    (String(e.userId) === String(CU.id) && ['deposit','withdrawal'].includes(normalizeAccountEventType(e.type)))
-      ? {...e, appliedToBalance:true}
-      : e
-  );
-  evs.push({id:String(Date.now()), userId:String(CU.id), type:'deposit', amount, date, note, appliedToBalance:true, createdAt:new Date().toISOString()});
+  const evs = DB.getEvents();
+  evs.push({id:String(Date.now()), userId:String(CU.id), type:'deposit', amount, date, note, createdAt:new Date().toISOString()});
   DB.saveEvents(evs);
   document.getElementById('depAmount').value='';
   document.getElementById('depNote').value='';
@@ -1287,14 +1284,8 @@ function addWithdrawal() {
   const date   = document.getElementById('witDate').value || new Date().toISOString().split('T')[0];
   const note   = document.getElementById('witNote').value.trim();
   if (!amount||amount<=0) { toast('Ingresa un monto válido.','err'); return; }
-  const before = getAccountTotals();
-  saveCurrentUserBanca(before.effectiveBase - amount);
-  const evs = DB.getEvents().map(e =>
-    (String(e.userId) === String(CU.id) && ['deposit','withdrawal'].includes(normalizeAccountEventType(e.type)))
-      ? {...e, appliedToBalance:true}
-      : e
-  );
-  evs.push({id:String(Date.now()), userId:String(CU.id), type:'withdrawal', amount, date, note, appliedToBalance:true, createdAt:new Date().toISOString()});
+  const evs = DB.getEvents();
+  evs.push({id:String(Date.now()), userId:String(CU.id), type:'withdrawal', amount, date, note, createdAt:new Date().toISOString()});
   DB.saveEvents(evs);
   document.getElementById('witAmount').value='';
   document.getElementById('witNote').value='';
@@ -1312,10 +1303,6 @@ function delAccountEvent(evId) {
   const kept  = all.filter(e => e.id !== evId);
   DB.saveEvents(kept);
   const removedType = normalizeAccountEventType(removed?.type);
-  if (removed && removed.appliedToBalance && (removedType === 'deposit' || removedType === 'withdrawal')) {
-    const delta = removedType === 'deposit' ? -parseMoneyInput(removed.amount) : parseMoneyInput(removed.amount);
-    saveCurrentUserBanca(getUserBanca() + delta);
-  }
   // Se era um evento 'initial', reverter banca do user para o anterior
   const myEvs = kept.filter(e=>String(e.userId)===String(CU.id) && normalizeAccountEventType(e.type)==='initial');
   if (removed && removedType === 'initial' && myEvs.length) {
