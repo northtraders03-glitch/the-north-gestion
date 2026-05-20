@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>The North Academy — Gestión de Riesgo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --primary:#FF6B00; --primary-dark:#CC5500; --primary-light:#FF9933;
@@ -967,13 +968,13 @@ function _dec(raw) {
 /* ════════ DB LAYER ════════ */
 const DB = {
   getUsers()   { return _dec(localStorage.getItem('tna_u'))  || []; },
-  saveUsers(u) { localStorage.setItem('tna_u', _enc(u)); },
+  saveUsers(u) { localStorage.setItem('tna_u', _enc(u)); if (typeof Cloud !== 'undefined') Cloud.queueSync(); },
   getOps()     { return _dec(localStorage.getItem('tna_o'))  || []; },
-  saveOps(o)   { localStorage.setItem('tna_o', _enc(o)); },
+  saveOps(o)   { localStorage.setItem('tna_o', _enc(o)); if (typeof Cloud !== 'undefined') Cloud.queueSync(); },
   getMetas()   { return _dec(localStorage.getItem('tna_m'))  || []; },
-  saveMetas(m) { localStorage.setItem('tna_m', _enc(m)); },
+  saveMetas(m) { localStorage.setItem('tna_m', _enc(m)); if (typeof Cloud !== 'undefined') Cloud.queueSync(); },
   getEvents()   { return _dec(localStorage.getItem('tna_ae')) || []; },
-  saveEvents(e) { localStorage.setItem('tna_ae', _enc(e)); },
+  saveEvents(e) { localStorage.setItem('tna_ae', _enc(e)); if (typeof Cloud !== 'undefined') Cloud.queueSync(); },
   getCU()      { try { return JSON.parse(sessionStorage.getItem('tna_cu')||'null'); } catch { return null; } },
   setCU(u)     { sessionStorage.setItem('tna_cu', JSON.stringify(u)); },
   clearCU()    { sessionStorage.removeItem('tna_cu'); },
@@ -985,13 +986,97 @@ let selLvl = 'beg';    // selected level
 let riskCb  = null;     // risk popup callback
 let charts  = {};       // Chart.js instances
 const APP_VERSION = 'balance-ledger-v1';
+const SUPABASE_URL = 'https://ztcsonimayhekffakhgq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_5ti97-hw6dIVZVD5ukB_0Q_NEOH-oZ2';
+
+const Cloud = {
+  client:null, ready:false, loading:false, syncTimer:null,
+  init() {
+    if (this.client) return true;
+    if (!window.supabase || !SUPABASE_URL || !SUPABASE_KEY) return false;
+    this.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    return true;
+  },
+  async restoreSession() {
+    if (!this.init()) return false;
+    const { data } = await this.client.auth.getSession();
+    if (!data.session) return false;
+    await this.loadUser(data.session.user);
+    return true;
+  },
+  async loadUser(authUser) {
+    this.loading = true;
+    const { data: profile, error: pErr } = await this.client
+      .from('profiles')
+      .select('*')
+      .eq('id', authUser.id)
+      .maybeSingle();
+    if (pErr) throw pErr;
+
+    const fallbackEmail = (authUser.email || '').toLowerCase();
+    CU = {
+      id: authUser.id,
+      name: profile?.name || fallbackEmail,
+      email: profile?.email || fallbackEmail,
+      whatsapp: profile?.whatsapp || '',
+      country: profile?.country || '',
+      banca: money(profile?.banca || 1000),
+      nivel: profile?.nivel || 'beg',
+      registeredAt: profile?.registered_at || authUser.created_at
+    };
+    DB.setCU(CU);
+    DB.saveUsers([CU]);
+
+    const { data: dataRow, error: dErr } = await this.client
+      .from('user_data')
+      .select('*')
+      .eq('user_id', authUser.id)
+      .maybeSingle();
+    if (dErr) throw dErr;
+
+    localStorage.setItem('tna_o', _enc(dataRow?.ops || []));
+    localStorage.setItem('tna_ae', _enc(dataRow?.events || []));
+    localStorage.setItem('tna_m', _enc(dataRow?.metas || []));
+    if (dataRow?.balance && dataRow.balance.current !== undefined) {
+      localStorage.setItem(balanceKey(), _enc(dataRow.balance));
+    } else {
+      saveStoredCurrentBanca(CU.banca || 1000);
+    }
+    this.loading = false;
+  },
+  queueSync() {
+    if (this.loading || !CU || CU.isAdmin || !this.init()) return;
+    clearTimeout(this.syncTimer);
+    this.syncTimer = setTimeout(() => this.syncNow(), 150);
+  },
+  async syncNow() {
+    if (this.loading || !CU || CU.isAdmin || !this.init()) return;
+    const { data } = await this.client.auth.getSession();
+    if (!data.session) return;
+    const ops = DB.getOps().filter(o => String(o.userId) === String(CU.id));
+    const events = DB.getEvents().filter(e => String(e.userId) === String(CU.id));
+    const metas = DB.getMetas().filter(m => String(m.userId) === String(CU.id));
+    const balance = _dec(localStorage.getItem(balanceKey())) || { current:getComputedBanca() };
+    await this.client.from('profiles').upsert({
+      id: CU.id, name: CU.name, email: CU.email, whatsapp: CU.whatsapp || '',
+      country: CU.country || '', banca: getUserBanca(), nivel: CU.nivel || 'beg'
+    });
+    await this.client.from('user_data').upsert({
+      user_id: CU.id, ops, events, metas, balance, updated_at:new Date().toISOString()
+    });
+  }
+};
 
 /* ════════ INIT ════════ */
-window.onload = () => {
+window.onload = async () => {
   const d = new Date();
   document.getElementById('opFecha').value = d.toISOString().split('T')[0];
   document.getElementById('topDate').textContent =
     d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  try {
+    const restored = await Cloud.restoreSession();
+    if (restored) { launchApp(); return; }
+  } catch(e) { console.warn('Supabase restore failed', e); }
   const saved = DB.getCU();
   if (saved) { CU = saved; launchApp(); }
 };
@@ -1004,7 +1089,7 @@ function switchTab(t) {
   ['loginErr','regErr','regOk'].forEach(id => document.getElementById(id).textContent='');
 }
 
-function doLogin() {
+async function doLogin() {
   const u = document.getElementById('lu').value.trim().toLowerCase();
   const p = document.getElementById('lp').value;
   const err = document.getElementById('loginErr');
@@ -1019,6 +1104,21 @@ function doLogin() {
     DB.setCU(CU); launchApp(); return;
   }
 
+  if (Cloud.init()) {
+    try {
+      const { data, error } = await Cloud.client.auth.signInWithPassword({ email:u, password:p });
+      if (error) throw error;
+      await Cloud.loadUser(data.user);
+      launchApp();
+      return;
+    } catch(e) {
+      err.textContent = e.message && e.message.includes('relation')
+        ? 'Falta crear las tablas en Supabase.'
+        : 'Usuario o contraseña incorrectos.';
+      return;
+    }
+  }
+
   const users = DB.getUsers();
   const found = users.find(x =>
     x.email.toLowerCase() === u && x.pass === p
@@ -1028,7 +1128,7 @@ function doLogin() {
   DB.setCU(CU); launchApp();
 }
 
-function doRegister() {
+async function doRegister() {
   const name = document.getElementById('rn').value.trim();
   const email= document.getElementById('re').value.trim().toLowerCase();
   const wa   = document.getElementById('rw').value.trim();
@@ -1040,6 +1140,41 @@ function doRegister() {
 
   if (!name||!email||!wa||!ctry||!pass) { err.textContent='Completa todos los campos.'; return; }
   if (pass.length<6) { err.textContent='La contraseña debe tener al menos 6 caracteres.'; return; }
+
+  if (Cloud.init()) {
+    try {
+      const { data, error } = await Cloud.client.auth.signUp({
+        email,
+        password: pass,
+        options: { data: { name, whatsapp: wa, country: ctry } }
+      });
+      if (error) throw error;
+      const user = data.user;
+      if (!user) throw new Error('No se pudo crear el usuario.');
+      if (data.session) {
+        await Cloud.client.from('profiles').upsert({
+          id:user.id, name, email, whatsapp:wa, country:ctry, banca:1000, nivel:'beg',
+          registered_at:new Date().toISOString()
+        });
+        await Cloud.client.from('user_data').upsert({
+          user_id:user.id, ops:[], events:[], metas:[],
+          balance:{ current:1000, updatedAt:new Date().toISOString() },
+          updated_at:new Date().toISOString()
+        });
+        await Cloud.loadUser(user);
+        launchApp();
+      } else {
+        ok.textContent='Cuenta creada. Confirma tu email y luego inicia sesión.';
+        setTimeout(()=>switchTab('login'), 2200);
+      }
+      return;
+    } catch(e) {
+      err.textContent = e.message && e.message.includes('relation')
+        ? 'Falta crear las tablas en Supabase.'
+        : (e.message || 'No se pudo crear la cuenta.');
+      return;
+    }
+  }
 
   const users = DB.getUsers();
   if (users.find(x=>x.email===email)) { err.textContent='Este email ya está registrado.'; return; }
@@ -1056,7 +1191,8 @@ function doRegister() {
   setTimeout(()=>switchTab('login'), 1800);
 }
 
-function doLogout() {
+async function doLogout() {
+  try { if (Cloud.init()) await Cloud.client.auth.signOut(); } catch(e) {}
   DB.clearCU(); CU = null;
   closeMobileMenu();
   document.getElementById('app').style.display='none';
