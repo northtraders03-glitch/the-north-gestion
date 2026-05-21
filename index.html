@@ -1150,7 +1150,11 @@ async function doRegister() {
       });
       if (error) throw error;
       const user = data.user;
-      if (!user) throw new Error('No se pudo crear el usuario.');
+      if (!user) {
+        ok.textContent='Cuenta creada. Revisa tu email para confirmar el acceso.';
+        setTimeout(()=>switchTab('login'), 2200);
+        return;
+      }
       if (data.session) {
         await Cloud.client.from('profiles').upsert({
           id:user.id, name, email, whatsapp:wa, country:ctry, banca:1000, nivel:'beg',
@@ -1169,9 +1173,10 @@ async function doRegister() {
       }
       return;
     } catch(e) {
+      console.error('register error', e);
       err.textContent = e.message && e.message.includes('relation')
         ? 'Falta crear las tablas en Supabase.'
-        : (e.message || 'No se pudo crear la cuenta.');
+        : ('No se pudo crear la cuenta: ' + (e.message || JSON.stringify(e)));
       return;
     }
   }
