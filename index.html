@@ -801,7 +801,7 @@ tr:hover td{background:#ffffff04}
           <div class="card">
             <div class="card-title">REGISTRAR CUENTA INICIAL</div>
             <div class="fld" style="margin-bottom:10px"><span class="lbl">VALOR INICIAL (USD)</span>
-              <input type="number" class="if" id="bancaIn" placeholder="Ej: 1000.00" step="0.01">
+              <input type="number" class="if" id="bancaIn" placeholder="0.00" step="0.01">
             </div>
             <div class="fld" style="margin-bottom:10px"><span class="lbl">NIVEL POR DEFECTO</span>
               <select class="if" id="nivelDef">
@@ -1542,7 +1542,7 @@ function syncBancaUI() {
   const u = getCurrentUserRecord();
   if (u) {
     const el = document.getElementById('bancaIn');
-    if (el) el.value = getUserBanca();
+    if (el) el.value = '';
     const nl = document.getElementById('nivelDef');
     if (nl) nl.value = u.nivel||'beg';
   }
